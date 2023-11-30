@@ -10,9 +10,7 @@ import 'package:reports/presentation/resources/string_manager.dart';
 
 import '../../../app/app_prefs.dart';
 
-
-class LoginViewModel extends  LoginViewModelOutput {
-
+class LoginViewModel extends LoginViewModelOutput {
   final AppPreferences _appPreferences = instance<AppPreferences>();
   final StreamController _emailController =
       StreamController<String>.broadcast();
@@ -26,10 +24,12 @@ class LoginViewModel extends  LoginViewModelOutput {
       StreamController.broadcast();
   LoginObject _loginObject = LoginObject('', '');
   final LoginUseCase _loginUseCase;
-  LoginViewModel(this._loginUseCase);
-  bool visible=false;
-  @override
 
+  LoginViewModel(this._loginUseCase);
+
+  bool visible = false;
+
+  @override
   void start() {
     inputState.add(ContentState());
   }
@@ -74,16 +74,17 @@ class LoginViewModel extends  LoginViewModelOutput {
         email: _loginObject.email,
         password: _loginObject.password,
       ),
-    )).fold((failure) {
+    ))
+        .fold((failure) {
       inputState.add(
         ErrorState(
           stateRenderType: StateRenderType.popupErrorState,
           message: failure.message,
         ),
       );
-    }, (data) async{
-      // await _appPreferences.setToken(data.user!.uid);
-      print("uid ${_appPreferences.getToken()}");
+    }, (data) async {
+      await _appPreferences.setToken(data);
+      print(_appPreferences.getToken());
       inputState.add(
         ContentState(),
       );
@@ -130,21 +131,16 @@ class LoginViewModel extends  LoginViewModelOutput {
   String? _emailOutError(String email) {
     if (email.isEmpty) {
       return AppStrings.emailError;
-    } else if (!RegExp(
-            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-        .hasMatch(email)) {
-      return AppStrings.emailError2;
+    } else {
+      return null;
     }
-    return null;
   }
 
   bool _emailIsValid(String email) {
-    return RegExp(
-            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-        .hasMatch(email);
+    print(email);
+    return email.isNotEmpty;
+
   }
-
-
 
   String? _passwordOutError(String password) {
     if (password.isEmpty) {
@@ -157,8 +153,6 @@ class LoginViewModel extends  LoginViewModelOutput {
     return _emailIsValid(_loginObject.email) &&
         _loginObject.password.isNotEmpty;
   }
-
-
 }
 
 abstract class LoginViewModelInput extends BaseViewModel {
@@ -179,7 +173,7 @@ abstract class LoginViewModelInput extends BaseViewModel {
   Sink get inputAreAllInputValid;
 }
 
-abstract class LoginViewModelOutput extends LoginViewModelInput{
+abstract class LoginViewModelOutput extends LoginViewModelInput {
   Stream<String?> get outEmailIsValid;
 
   Stream<String?> get outPasswordIsValid;

@@ -12,12 +12,10 @@ class AppStrings {
   static const String addColumn  = "إضافة عمود ";
   static const String nonFinishedColumn = "أعمدة غير منهية";
   static const String finishedColumn = 'أعمدة منتهية';
-  static const String signupSubTitle =
-      'Looks like you don’t have an account. Let’s create a new account for you.';
-  static const String privacy =
-      'By selecting Create Account below, I agree to Terms of Service & Privacy Policy';
-  static const String recoverPasswordTitle = "Recover Password";
-  static const String recoverPasswordSubTitle = 'Forgot your password? Don’t worry, enter your email to reset your current password.';
+  static const String save = 'حفظ';
+  static const String delete = 'حذف';
+  static const String show = "عرض";
+  static const String edit = 'تعديل';
   static const String submit ='SUBMIT';
   static const String verifyCodeTitle = "Verify Code";
   static const String verifyCodeSubTitle = 'An authentication code has been sent to your email';
@@ -54,11 +52,10 @@ class AppStrings {
   static const String nameError1 = 'Please enter your name ';
   static const String nameError2 = 'Please enter at least 3 characters ';
   static const String confirmError = 'Password not confirm';
-  static const String email = 'Email';
-  static const String emailError = 'Please enter your email ';
-  static const String emailError2 = 'Please enter valid email ';
+  static const String userName = 'User Name';
+  static const String emailError = 'برجاء ادخال اسم المستخدم ';
   static const String password = 'Password';
-  static const String passwordError = 'Please enter your password';
+  static const String passwordError = 'برجاء ادخال كلمة المرور';
   static const String search = "Search or Add New Exercise";
 
   static const String popularDoctor = "Popular Doctor";

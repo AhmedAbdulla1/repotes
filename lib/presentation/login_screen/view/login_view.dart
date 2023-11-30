@@ -47,7 +47,7 @@ class _LoginViewState extends State<LoginView> {
         .listen((isLoading) {
       if (isLoading) {
         SchedulerBinding.instance.addPostFrameCallback((_) {
-          _appPreferences.setPressKeyLoginScreen();
+          _appPreferences.setPressKeyLoginScreen(true);
           debugPrint(_appPreferences.getToken());
           Navigator.pushReplacementNamed(context, Routes.mainScreen);
         });
@@ -114,7 +114,7 @@ class _LoginViewState extends State<LoginView> {
               customTextFormField(
                 stream: _loginViewModel.outEmailIsValid,
                 textEditingController: _emailController,
-                hintText: AppStrings.email,
+                hintText: AppStrings.userName,
               ),
               const SizedBox(height: AppSize.s16),
               customPasswordFormField(
@@ -130,8 +130,8 @@ class _LoginViewState extends State<LoginView> {
               customElevatedButton(
                 stream: _loginViewModel.outAreAllInputValid,
                 onPressed: () {
-                  // _loginViewModel.login();
-                  Navigator.pushReplacementNamed(context, Routes.mainScreen);
+                  _loginViewModel.login();
+                  // Navigator.pushReplacementNamed(context, Routes.mainScreen);
                 },
                 text: AppStrings.login,
               ),

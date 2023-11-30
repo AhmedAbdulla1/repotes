@@ -9,10 +9,10 @@ part 'app_api.g.dart';
 @RestApi(baseUrl: Constant.baseurl,)
 abstract class  AppServicesClient{
   factory AppServicesClient(Dio dio,{String baseUrl}) =_AppServicesClient;
-  @GET("api/Userstbls")
+  @POST("login.php")
   Future<LoginAuthenticationResponse> login(
-      @Query("Email") String email,
-      @Query("Password") String password,
+      @Field("username") String email,
+      @Field("password") String password,
       );
 
 
@@ -30,6 +30,8 @@ abstract class  AppServicesClient{
   //
   // @GET("/store_details")
   // Future<StoresDetailsResponse> getStoreDetails();
+
+
 
 }
 

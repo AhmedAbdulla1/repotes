@@ -9,11 +9,11 @@ import 'package:reports/presentation/common/state_render/state_renderer_imp.dart
 import 'package:reports/presentation/main_screen/add-column/view_model.dart';
 import 'package:reports/presentation/resources/assets_manager.dart';
 import 'package:reports/presentation/resources/color_manager.dart';
+import 'package:reports/presentation/resources/font_manager.dart';
 import 'package:reports/presentation/resources/string_manager.dart';
 import 'package:reports/presentation/resources/values_manager.dart';
 import 'package:image_picker/image_picker.dart';
-
-
+import 'package:geolocator/geolocator.dart';
 
 class AddColumnView extends StatefulWidget {
   const AddColumnView({Key? key}) : super(key: key);
@@ -40,7 +40,6 @@ class _AddColumnViewState extends State<AddColumnView> {
           _getContent(),
     );
   }
-
   Widget _getContent() {
     return ListView(
       padding: EdgeInsets.all(AppPadding.p16.w),
@@ -50,8 +49,23 @@ class _AddColumnViewState extends State<AddColumnView> {
           textEditingController: _columnNameController,
           hintText: AppStrings.columnName,
         ),
+        SizedBox(height: AppSize.s16.h),
+        customElevatedButtonWithoutStream(
+          onPressed: () {
+            _viewModel.getLocation();
+          },
+          child: Text(
+            "الموقع",
+            style: TextStyle(
+              color: ColorManager.white,
+              fontFamily: FontConstants.enFontFamily,
+              fontSize: FontSize.s24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
         SizedBox(
-          height: AppSize.s16.w,
+          height: AppSize.s16.h,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -182,6 +196,7 @@ class _AddColumnViewState extends State<AddColumnView> {
       ],
     );
   }
+
   _showPicker(BuildContext context, int num) {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(

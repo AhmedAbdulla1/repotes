@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:geolocator/geolocator.dart';
 
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:reports/app/app_prefs.dart';
@@ -9,6 +10,7 @@ import 'package:reports/presentation/main_screen/ended-column/view.dart';
 import 'package:reports/presentation/main_screen/finished-column/view.dart';
 import 'package:reports/presentation/main_screen/main_view_model.dart';
 import 'package:reports/presentation/resources/color_manager.dart';
+import 'package:reports/presentation/resources/routes_manager.dart';
 import 'package:reports/presentation/resources/string_manager.dart';
 import 'package:reports/presentation/resources/values_manager.dart';
 
@@ -81,6 +83,23 @@ class _MainViewState extends State<MainView> {
             ),
             child: AppBar(
               bottomOpacity: 10,
+              actions: [
+                Center(
+                    child: Text(
+                  appPreferences.getToken(),
+                  style: Theme.of(context).textTheme.labelSmall,
+                )),
+                IconButton(
+                  onPressed: () {
+                    appPreferences.setPressKeyLoginScreen(false);
+                    Navigator.pushReplacementNamed(context, Routes.loginScreen);
+                  },
+                  icon: Icon(
+                    Icons.logout,
+                    color: ColorManager.white,
+                  ),
+                ),
+              ],
               title: StreamBuilder<int>(
                 stream: _viewModel.outputIndex,
                 builder: (context, snapshot) {
@@ -96,7 +115,7 @@ class _MainViewState extends State<MainView> {
           context,
           controller: _controller,
           items: navBarItems,
-          screens:  [
+          screens: [
             // Add your tab views/screens here
             AddColumnView(),
             FinishedColumnView(),
@@ -116,3 +135,5 @@ class _MainViewState extends State<MainView> {
     );
   }
 }
+
+

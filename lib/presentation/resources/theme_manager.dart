@@ -83,7 +83,7 @@ ThemeData getApplicationTheme() {
         fontSize: FontSize.s16,
       ),
       labelSmall: getRegularStyle(
-        color: ColorManager.simiBlue,
+        color: ColorManager.white,
         fontSize: FontSize.s14,
       ),
       labelMedium: getMediumStyle(

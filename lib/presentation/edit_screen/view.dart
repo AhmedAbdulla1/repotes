@@ -6,7 +6,7 @@ import 'package:reports/app/di.dart';
 import 'package:reports/presentation/common/reusable/custom_button.dart';
 import 'package:reports/presentation/common/reusable/custom_text_form_field.dart';
 import 'package:reports/presentation/common/state_render/state_renderer_imp.dart';
-import 'package:reports/presentation/main_screen/add-column/view_model.dart';
+import 'package:reports/presentation/edit_screen/view_model.dart';
 import 'package:reports/presentation/resources/assets_manager.dart';
 import 'package:reports/presentation/resources/color_manager.dart';
 import 'package:reports/presentation/resources/string_manager.dart';
@@ -15,29 +15,34 @@ import 'package:image_picker/image_picker.dart';
 
 
 
-class AddColumnView extends StatefulWidget {
-  const AddColumnView({Key? key}) : super(key: key);
+class EditColumnView extends StatefulWidget {
+  const EditColumnView({Key? key}) : super(key: key);
 
   @override
-  State<AddColumnView> createState() => _AddColumnViewState();
+  State<EditColumnView> createState() => _EditColumnViewState();
 }
 
-class _AddColumnViewState extends State<AddColumnView> {
-  final AddColumnViewModel _viewModel = instance<AddColumnViewModel>();
+class _EditColumnViewState extends State<EditColumnView> {
+  final EditColumnViewModel _viewModel = EditColumnViewModel();
   final TextEditingController _columnNameController = TextEditingController();
   final ImagePicker _imagePicker = ImagePicker();
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<StateFlow>(
-      stream: _viewModel.outputState,
-      builder: (context, snapshot) =>
-          snapshot.data?.getScreenWidget(
-            context,
+    return Scaffold(
+      appBar:AppBar(
+        title:Text( "تعديل"),
+      ),
+      body: StreamBuilder<StateFlow>(
+        stream: _viewModel.outputState,
+        builder: (context, snapshot) =>
+            snapshot.data?.getScreenWidget(
+              context,
+              _getContent(),
+              () {},
+            ) ??
             _getContent(),
-            () {},
-          ) ??
-          _getContent(),
+      ),
     );
   }
 
@@ -90,17 +95,17 @@ class _AddColumnViewState extends State<AddColumnView> {
             StreamBuilder<File>(
               stream: _viewModel.afterImageOutput,
               builder: (context, snapshot) =>
-                  _customItem(AppStrings.after, snapshot.data, 3),
+                  _customItem(AppStrings.after, snapshot.data, 3,),
             ),
           ],
         ),
         SizedBox(
-          height: AppSize.s16.w,
+          height: AppSize.s30.h,
         ),
         customElevatedButton(
           stream: _viewModel.allRightOutput,
           onPressed: () {},
-          text: AppStrings.end,
+          text: AppStrings.save,
         ),
       ],
     );

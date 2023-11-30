@@ -13,7 +13,7 @@ class _AppServicesClient implements AppServicesClient {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'https://app-mobile.tanta.edu.eg/';
+    baseUrl ??= 'https://roayadesign.com/api_s/';
   }
 
   final Dio _dio;
@@ -26,21 +26,21 @@ class _AppServicesClient implements AppServicesClient {
     String password,
   ) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{
-      r'Email': email,
-      r'Password': password,
-    };
+    final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    final _data = {
+      'username': email,
+      'password': password,
+    };
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<LoginAuthenticationResponse>(Options(
-      method: 'GET',
+      method: 'POST',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              'api/Userstbls',
+              'login.php',
               queryParameters: queryParameters,
               data: _data,
             )

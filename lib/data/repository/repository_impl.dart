@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:reports/data/data_source/local_data_source.dart';
 import 'package:dartz/dartz.dart';
 import 'package:reports/data/data_source/remote_data_source.dart';
@@ -12,6 +15,8 @@ import 'package:reports/domain/repository/repository.dart';
 
 class RepositoryImpl implements Repository {
   // final LocalDataSource _localDataSource;
+  Dio dio = Dio();
+  String url = "https://roayadesign.com/api_s/login.php";
   final RemoteDataSource _remoteDataSource;
   final NetWorkInfo _networkInfo;
 
@@ -22,17 +27,34 @@ class RepositoryImpl implements Repository {
   );
 
   @override
-  Future<Either<Failure,LoginAuthentication >> login(LoginRequest loginRequest) async {
+  Future<Either<Failure, String>> login(LoginRequest loginRequest) async {
+
+    FormData formData = FormData.fromMap({
+      'username': loginRequest.email,
+      'password': loginRequest.password,
+    });
     if (await _networkInfo.isConnected) {
       try {
-        final LoginAuthenticationResponse response = await _remoteDataSource.loginResponse(
-          loginRequest,
+        Response response = await dio.post(
+          url,
+          data: formData,
         );
-        // _localDataSource.saveHomeToCache(response);
-        return Right(
-          response.toDomain(),
-        );
+
+        if (response.data["status"] == "1") {
+          return Right(
+            loginRequest.email,
+          );
+        } else {
+          return Left(
+            Failure(
+              code: 0,
+              message: response.data['massage'],
+            ),
+          );
+        }
+
       } catch (error) {
+        print("12345600000000000000000 $error 000000000000000");
         return Left(
           ErrorHandler.handle(error).failure,
         );
@@ -43,7 +65,6 @@ class RepositoryImpl implements Repository {
       );
     }
   }
-
 
   @override
   // Future<Either<Failure, void>> sendEmail(String email) async {
@@ -143,7 +164,8 @@ class RepositoryImpl implements Repository {
   // }
 
   @override
-  Future<Either<Failure, void>> updateProfile(UpdateProfileRequest updateProfileRequest) async {
+  Future<Either<Failure, void>> updateProfile(
+      UpdateProfileRequest updateProfileRequest) async {
     if (await _networkInfo.isConnected) {
       void response;
       try {
@@ -171,7 +193,6 @@ class RepositoryImpl implements Repository {
       );
     }
   }
-
 }
 
 // @override

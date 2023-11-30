@@ -100,11 +100,11 @@ class _$SignupObjectCopyWithImpl<$Res, $Val extends SignupObject>
 }
 
 /// @nodoc
-abstract class _$$_SignupObjectCopyWith<$Res>
+abstract class _$$SignupObjectImplCopyWith<$Res>
     implements $SignupObjectCopyWith<$Res> {
-  factory _$$_SignupObjectCopyWith(
-          _$_SignupObject value, $Res Function(_$_SignupObject) then) =
-      __$$_SignupObjectCopyWithImpl<$Res>;
+  factory _$$SignupObjectImplCopyWith(
+          _$SignupObjectImpl value, $Res Function(_$SignupObjectImpl) then) =
+      __$$SignupObjectImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -118,11 +118,11 @@ abstract class _$$_SignupObjectCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_SignupObjectCopyWithImpl<$Res>
-    extends _$SignupObjectCopyWithImpl<$Res, _$_SignupObject>
-    implements _$$_SignupObjectCopyWith<$Res> {
-  __$$_SignupObjectCopyWithImpl(
-      _$_SignupObject _value, $Res Function(_$_SignupObject) _then)
+class __$$SignupObjectImplCopyWithImpl<$Res>
+    extends _$SignupObjectCopyWithImpl<$Res, _$SignupObjectImpl>
+    implements _$$SignupObjectImplCopyWith<$Res> {
+  __$$SignupObjectImplCopyWithImpl(
+      _$SignupObjectImpl _value, $Res Function(_$SignupObjectImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -136,7 +136,7 @@ class __$$_SignupObjectCopyWithImpl<$Res>
     Object? age = null,
     Object? gender = null,
   }) {
-    return _then(_$_SignupObject(
+    return _then(_$SignupObjectImpl(
       null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -171,8 +171,8 @@ class __$$_SignupObjectCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_SignupObject implements _SignupObject {
-  _$_SignupObject(this.name, this.email, this.password, this.boydWeight,
+class _$SignupObjectImpl implements _SignupObject {
+  _$SignupObjectImpl(this.name, this.email, this.password, this.boydWeight,
       this.height, this.age, this.gender);
 
   @override
@@ -199,7 +199,7 @@ class _$_SignupObject implements _SignupObject {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_SignupObject &&
+            other is _$SignupObjectImpl &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.password, password) ||
@@ -218,8 +218,8 @@ class _$_SignupObject implements _SignupObject {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_SignupObjectCopyWith<_$_SignupObject> get copyWith =>
-      __$$_SignupObjectCopyWithImpl<_$_SignupObject>(this, _$identity);
+  _$$SignupObjectImplCopyWith<_$SignupObjectImpl> get copyWith =>
+      __$$SignupObjectImplCopyWithImpl<_$SignupObjectImpl>(this, _$identity);
 }
 
 abstract class _SignupObject implements SignupObject {
@@ -230,7 +230,7 @@ abstract class _SignupObject implements SignupObject {
       final String boydWeight,
       final String height,
       final String age,
-      final String gender) = _$_SignupObject;
+      final String gender) = _$SignupObjectImpl;
 
   @override
   String get name;
@@ -248,7 +248,7 @@ abstract class _SignupObject implements SignupObject {
   String get gender;
   @override
   @JsonKey(ignore: true)
-  _$$_SignupObjectCopyWith<_$_SignupObject> get copyWith =>
+  _$$SignupObjectImplCopyWith<_$SignupObjectImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -301,22 +301,22 @@ class _$LoginObjectCopyWithImpl<$Res, $Val extends LoginObject>
 }
 
 /// @nodoc
-abstract class _$$_LoginObjectCopyWith<$Res>
+abstract class _$$LoginObjectImplCopyWith<$Res>
     implements $LoginObjectCopyWith<$Res> {
-  factory _$$_LoginObjectCopyWith(
-          _$_LoginObject value, $Res Function(_$_LoginObject) then) =
-      __$$_LoginObjectCopyWithImpl<$Res>;
+  factory _$$LoginObjectImplCopyWith(
+          _$LoginObjectImpl value, $Res Function(_$LoginObjectImpl) then) =
+      __$$LoginObjectImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String email, String password});
 }
 
 /// @nodoc
-class __$$_LoginObjectCopyWithImpl<$Res>
-    extends _$LoginObjectCopyWithImpl<$Res, _$_LoginObject>
-    implements _$$_LoginObjectCopyWith<$Res> {
-  __$$_LoginObjectCopyWithImpl(
-      _$_LoginObject _value, $Res Function(_$_LoginObject) _then)
+class __$$LoginObjectImplCopyWithImpl<$Res>
+    extends _$LoginObjectCopyWithImpl<$Res, _$LoginObjectImpl>
+    implements _$$LoginObjectImplCopyWith<$Res> {
+  __$$LoginObjectImplCopyWithImpl(
+      _$LoginObjectImpl _value, $Res Function(_$LoginObjectImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -325,7 +325,7 @@ class __$$_LoginObjectCopyWithImpl<$Res>
     Object? email = null,
     Object? password = null,
   }) {
-    return _then(_$_LoginObject(
+    return _then(_$LoginObjectImpl(
       null == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
@@ -340,8 +340,8 @@ class __$$_LoginObjectCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_LoginObject implements _LoginObject {
-  _$_LoginObject(this.email, this.password);
+class _$LoginObjectImpl implements _LoginObject {
+  _$LoginObjectImpl(this.email, this.password);
 
   @override
   final String email;
@@ -357,7 +357,7 @@ class _$_LoginObject implements _LoginObject {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_LoginObject &&
+            other is _$LoginObjectImpl &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.password, password) ||
                 other.password == password));
@@ -369,13 +369,13 @@ class _$_LoginObject implements _LoginObject {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_LoginObjectCopyWith<_$_LoginObject> get copyWith =>
-      __$$_LoginObjectCopyWithImpl<_$_LoginObject>(this, _$identity);
+  _$$LoginObjectImplCopyWith<_$LoginObjectImpl> get copyWith =>
+      __$$LoginObjectImplCopyWithImpl<_$LoginObjectImpl>(this, _$identity);
 }
 
 abstract class _LoginObject implements LoginObject {
   factory _LoginObject(final String email, final String password) =
-      _$_LoginObject;
+      _$LoginObjectImpl;
 
   @override
   String get email;
@@ -383,7 +383,7 @@ abstract class _LoginObject implements LoginObject {
   String get password;
   @override
   @JsonKey(ignore: true)
-  _$$_LoginObjectCopyWith<_$_LoginObject> get copyWith =>
+  _$$LoginObjectImplCopyWith<_$LoginObjectImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -443,22 +443,22 @@ class _$ForgotPasswordObjectCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_ForgotPasswordObjectCopyWith<$Res>
+abstract class _$$ForgotPasswordObjectImplCopyWith<$Res>
     implements $ForgotPasswordObjectCopyWith<$Res> {
-  factory _$$_ForgotPasswordObjectCopyWith(_$_ForgotPasswordObject value,
-          $Res Function(_$_ForgotPasswordObject) then) =
-      __$$_ForgotPasswordObjectCopyWithImpl<$Res>;
+  factory _$$ForgotPasswordObjectImplCopyWith(_$ForgotPasswordObjectImpl value,
+          $Res Function(_$ForgotPasswordObjectImpl) then) =
+      __$$ForgotPasswordObjectImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String email, String otp, String password});
 }
 
 /// @nodoc
-class __$$_ForgotPasswordObjectCopyWithImpl<$Res>
-    extends _$ForgotPasswordObjectCopyWithImpl<$Res, _$_ForgotPasswordObject>
-    implements _$$_ForgotPasswordObjectCopyWith<$Res> {
-  __$$_ForgotPasswordObjectCopyWithImpl(_$_ForgotPasswordObject _value,
-      $Res Function(_$_ForgotPasswordObject) _then)
+class __$$ForgotPasswordObjectImplCopyWithImpl<$Res>
+    extends _$ForgotPasswordObjectCopyWithImpl<$Res, _$ForgotPasswordObjectImpl>
+    implements _$$ForgotPasswordObjectImplCopyWith<$Res> {
+  __$$ForgotPasswordObjectImplCopyWithImpl(_$ForgotPasswordObjectImpl _value,
+      $Res Function(_$ForgotPasswordObjectImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -468,7 +468,7 @@ class __$$_ForgotPasswordObjectCopyWithImpl<$Res>
     Object? otp = null,
     Object? password = null,
   }) {
-    return _then(_$_ForgotPasswordObject(
+    return _then(_$ForgotPasswordObjectImpl(
       null == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
@@ -487,8 +487,8 @@ class __$$_ForgotPasswordObjectCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_ForgotPasswordObject implements _ForgotPasswordObject {
-  _$_ForgotPasswordObject(this.email, this.otp, this.password);
+class _$ForgotPasswordObjectImpl implements _ForgotPasswordObject {
+  _$ForgotPasswordObjectImpl(this.email, this.otp, this.password);
 
   @override
   final String email;
@@ -506,7 +506,7 @@ class _$_ForgotPasswordObject implements _ForgotPasswordObject {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_ForgotPasswordObject &&
+            other is _$ForgotPasswordObjectImpl &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.otp, otp) || other.otp == otp) &&
             (identical(other.password, password) ||
@@ -519,15 +519,16 @@ class _$_ForgotPasswordObject implements _ForgotPasswordObject {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_ForgotPasswordObjectCopyWith<_$_ForgotPasswordObject> get copyWith =>
-      __$$_ForgotPasswordObjectCopyWithImpl<_$_ForgotPasswordObject>(
-          this, _$identity);
+  _$$ForgotPasswordObjectImplCopyWith<_$ForgotPasswordObjectImpl>
+      get copyWith =>
+          __$$ForgotPasswordObjectImplCopyWithImpl<_$ForgotPasswordObjectImpl>(
+              this, _$identity);
 }
 
 abstract class _ForgotPasswordObject implements ForgotPasswordObject {
   factory _ForgotPasswordObject(
           final String email, final String otp, final String password) =
-      _$_ForgotPasswordObject;
+      _$ForgotPasswordObjectImpl;
 
   @override
   String get email;
@@ -537,8 +538,8 @@ abstract class _ForgotPasswordObject implements ForgotPasswordObject {
   String get password;
   @override
   @JsonKey(ignore: true)
-  _$$_ForgotPasswordObjectCopyWith<_$_ForgotPasswordObject> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$ForgotPasswordObjectImplCopyWith<_$ForgotPasswordObjectImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -620,11 +621,11 @@ class _$TrainingObjectCopyWithImpl<$Res, $Val extends TrainingObject>
 }
 
 /// @nodoc
-abstract class _$$_TrainingObjectCopyWith<$Res>
+abstract class _$$TrainingObjectImplCopyWith<$Res>
     implements $TrainingObjectCopyWith<$Res> {
-  factory _$$_TrainingObjectCopyWith(
-          _$_TrainingObject value, $Res Function(_$_TrainingObject) then) =
-      __$$_TrainingObjectCopyWithImpl<$Res>;
+  factory _$$TrainingObjectImplCopyWith(_$TrainingObjectImpl value,
+          $Res Function(_$TrainingObjectImpl) then) =
+      __$$TrainingObjectImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -637,11 +638,11 @@ abstract class _$$_TrainingObjectCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_TrainingObjectCopyWithImpl<$Res>
-    extends _$TrainingObjectCopyWithImpl<$Res, _$_TrainingObject>
-    implements _$$_TrainingObjectCopyWith<$Res> {
-  __$$_TrainingObjectCopyWithImpl(
-      _$_TrainingObject _value, $Res Function(_$_TrainingObject) _then)
+class __$$TrainingObjectImplCopyWithImpl<$Res>
+    extends _$TrainingObjectCopyWithImpl<$Res, _$TrainingObjectImpl>
+    implements _$$TrainingObjectImplCopyWith<$Res> {
+  __$$TrainingObjectImplCopyWithImpl(
+      _$TrainingObjectImpl _value, $Res Function(_$TrainingObjectImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -654,7 +655,7 @@ class __$$_TrainingObjectCopyWithImpl<$Res>
     Object? autoStart = null,
     Object? idleTime = null,
   }) {
-    return _then(_$_TrainingObject(
+    return _then(_$TrainingObjectImpl(
       null == exercises
           ? _value.exercises
           : exercises // ignore: cast_nullable_to_non_nullable
@@ -685,8 +686,8 @@ class __$$_TrainingObjectCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_TrainingObject implements _TrainingObject {
-  _$_TrainingObject(this.exercises, this.image, this.large, this.smale,
+class _$TrainingObjectImpl implements _TrainingObject {
+  _$TrainingObjectImpl(this.exercises, this.image, this.large, this.smale,
       this.autoStart, this.idleTime);
 
   @override
@@ -711,7 +712,7 @@ class _$_TrainingObject implements _TrainingObject {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_TrainingObject &&
+            other is _$TrainingObjectImpl &&
             (identical(other.exercises, exercises) ||
                 other.exercises == exercises) &&
             (identical(other.image, image) || other.image == image) &&
@@ -730,8 +731,9 @@ class _$_TrainingObject implements _TrainingObject {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_TrainingObjectCopyWith<_$_TrainingObject> get copyWith =>
-      __$$_TrainingObjectCopyWithImpl<_$_TrainingObject>(this, _$identity);
+  _$$TrainingObjectImplCopyWith<_$TrainingObjectImpl> get copyWith =>
+      __$$TrainingObjectImplCopyWithImpl<_$TrainingObjectImpl>(
+          this, _$identity);
 }
 
 abstract class _TrainingObject implements TrainingObject {
@@ -741,7 +743,7 @@ abstract class _TrainingObject implements TrainingObject {
       final int large,
       final int smale,
       final bool autoStart,
-      final int idleTime) = _$_TrainingObject;
+      final int idleTime) = _$TrainingObjectImpl;
 
   @override
   String get exercises;
@@ -757,6 +759,6 @@ abstract class _TrainingObject implements TrainingObject {
   int get idleTime;
   @override
   @JsonKey(ignore: true)
-  _$$_TrainingObjectCopyWith<_$_TrainingObject> get copyWith =>
+  _$$TrainingObjectImplCopyWith<_$TrainingObjectImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

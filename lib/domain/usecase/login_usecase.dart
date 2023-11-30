@@ -6,14 +6,14 @@ import 'package:reports/domain/repository/repository.dart';
 import 'package:reports/domain/usecase/base_usecase.dart';
 
 
-class  LoginUseCase extends BaseUseCase <LoginUseCaseInput,LoginAuthentication>{
+class  LoginUseCase extends BaseUseCase <LoginUseCaseInput,String>{
 
   final Repository _repository;
 
   LoginUseCase(this._repository);
 
   @override
-  Future<Either<Failure, LoginAuthentication>> execute(LoginUseCaseInput input) {
+  Future<Either<Failure, String>> execute(LoginUseCaseInput input) {
     return _repository.login(LoginRequest(email: input.email, password: input.password));
 
   }

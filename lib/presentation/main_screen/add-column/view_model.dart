@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:async';
+import 'package:geolocator/geolocator.dart';
 import 'package:reports/presentation/base/base_view_model.dart';
+import 'package:reports/presentation/common/state_render/state_render.dart';
 import 'package:reports/presentation/common/state_render/state_renderer_imp.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -74,11 +76,29 @@ class AddColumnViewModel extends AddColumnViewModelInput {
   @override
   // TODO: implement innerImage2Output
   Stream<File> get innerImage2Output => _innerImage2StreamController.stream;
+
+  @override
+  getLocation() async{
+      await checkLocationPermission();
+      inputState.add(LoadingState(stateRenderType: StateRenderType.popupLoadingState));
+      try {
+        Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+        );
+
+        inputState.add(ContentState());
+         String locationMessage =
+          "Latitude: ${position.latitude}, Longitude: ${position.longitude}";
+          print(locationMessage);
+      } catch (e) {
+        print(e);
+      }
+  }
 }
 
 abstract class AddColumnViewModelInput extends AddColumnViewModelOutput {
   setColumnName(String name);
-
+  getLocation();
   Sink get columnNameInput;
 
   Sink get allRightInput;
@@ -104,4 +124,22 @@ abstract class AddColumnViewModelOutput extends BaseViewModel {
   Stream<File> get innerImage2Output;
 
   Stream<File> get beforeImageOutput;
+}
+Future<void> checkLocationPermission() async {
+  LocationPermission permission = await Geolocator.checkPermission();
+
+  if (permission == LocationPermission.denied) {
+    // Location permission is denied, request permission
+    permission = await Geolocator.requestPermission();
+
+    if (permission == LocationPermission.denied) {
+      // Permission is still denied, show a dialog to prompt the user to enable it
+      await Geolocator
+          .openLocationSettings(); // Opens the app settings where the user can manually enable permissions
+    }
+  } else if (permission == LocationPermission.deniedForever) {
+    // Permission is permanently denied, show a dialog to prompt the user to enable it
+    await Geolocator
+        .openLocationSettings(); // Opens the app settings where the user can manually enable permissions
+  }
 }

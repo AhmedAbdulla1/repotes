@@ -6,13 +6,8 @@ import 'package:reports/domain/models/models.dart';
 extension UserDataResponseMapper on UserDataResponse? {
   UserData toDomain() {
     return UserData(
-      email: this?.email.orEmpty() ?? Constant.empty,
       username: this?.username.orEmpty() ?? Constant.empty,
-      image: this?.image ?? Constant.image,
-      age: this?.age.orEmpty() ?? Constant.empty,
-      bodyWeight: this?.bodyWeight.orEmpty() ?? Constant.empty,
-      gender: this?.gender.orEmpty() ?? Constant.empty,
-      height: this?.height.orEmpty() ?? Constant.empty,
+
     );
   }
 }
@@ -34,34 +29,10 @@ extension LoginAuthenticationMapper on LoginAuthenticationResponse? {
   }
 }
 
-extension SendEmailResponsMapper on SendEmailResponse? {
-  SendEmail toDomain() {
-    return SendEmail(
-      otp: this?.otp.orEmpty() ?? Constant.empty,
-      message: this?.message.orEmpty() ?? Constant.empty,
-    );
-  }
-}
 
 extension RestPasswordResponsMapper on RestPasswordResponse? {
   String toDomain() {
     return this?.message.orEmpty() ?? Constant.empty;
-  }
-}
-
-extension DoctorDataResponseMapper on DoctorDataResponse? {
-  DoctorData toDomain() {
-    return DoctorData(
-      id: this?.id.orZero() ?? Constant.zero,
-      username: this?.username.orEmpty() ?? Constant.empty,
-      image: this?.image ?? Constant.image,
-      avgRating: this?.avgRating.orEmpty() ?? Constant.zero.toString(),
-      isLiked: this?.isLiked ?? false,
-      isLive: this?.isLive ?? false,
-      price: this?.price.orZero() ?? Constant.zero,
-      views: this?.views.orZero() ?? Constant.zero,
-      specialist: this?.specialist.orEmpty() ?? Constant.empty,
-    );
   }
 }
 

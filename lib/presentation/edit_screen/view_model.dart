@@ -4,7 +4,7 @@ import 'package:reports/presentation/base/base_view_model.dart';
 import 'package:reports/presentation/common/state_render/state_renderer_imp.dart';
 import 'package:rxdart/rxdart.dart';
 
-class AddColumnViewModel extends AddColumnViewModelInput {
+class EditColumnViewModel extends EditColumnViewModelInput {
   final StreamController<String> _columnStreamController =
       StreamController<String>.broadcast();
   final StreamController<bool> _allRightStreamController =
@@ -76,7 +76,7 @@ class AddColumnViewModel extends AddColumnViewModelInput {
   Stream<File> get innerImage2Output => _innerImage2StreamController.stream;
 }
 
-abstract class AddColumnViewModelInput extends AddColumnViewModelOutput {
+abstract class EditColumnViewModelInput extends EditColumnViewModelOutput {
   setColumnName(String name);
 
   Sink get columnNameInput;
@@ -92,7 +92,7 @@ abstract class AddColumnViewModelInput extends AddColumnViewModelOutput {
   Sink get beforeImageInput;
 }
 
-abstract class AddColumnViewModelOutput extends BaseViewModel {
+abstract class EditColumnViewModelOutput extends BaseViewModel {
   Stream<String> get columnNameOutput;
 
   Stream<bool> get allRightOutput;

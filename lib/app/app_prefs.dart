@@ -77,8 +77,8 @@ class AppPreferences {
   }
 
   //login
-  Future<void> setPressKeyLoginScreen() async {
-    _sharedPreferences.setBool(pressKeyLoginScreen, true);
+  Future<void> setPressKeyLoginScreen(bool b) async {
+    _sharedPreferences.setBool(pressKeyLoginScreen, b);
   }
 
   Future<bool> isPressKeyLoginScreen() async {

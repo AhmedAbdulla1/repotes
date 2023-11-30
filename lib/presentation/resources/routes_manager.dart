@@ -1,4 +1,5 @@
 import 'package:reports/app/di.dart';
+import 'package:reports/presentation/edit_screen/view.dart';
 
 import 'package:reports/presentation/login_screen/view/login_view.dart';
 
@@ -11,15 +12,10 @@ import '../main_screen/main_view.dart';
 
 class Routes {
   static const String splashScreen = "/";
-  static const String onBoardingScreen = "/onBoarding";
   static const String loginScreen = "/login";
-  static const String registerScreen = "/register";
-  static const String privacyScreen = "/privacy";
-  static const String recoverPasswordScreen = "/recoverPassword";
-  static const String verifyCodeScreen = "/verifyCodeScreen";
-  static const String changePasswordScreen = "/changePasswordScreen";
   static const String mainScreen = "/main";
-  static const String searchScreen = '/searchScreen';
+  static const String editScreen = '/editScreen';
+
   static const String profileDetailsScreen = "/profileDetails";
   static const String settingScreen = "/setting";
   static const String wifiSetupScreen = "/wifiSetup";
@@ -40,38 +36,14 @@ class RouteGenerator {
             return const LoginView();
           },
         );
-
-      // case Routes.recoverPasswordScreen:
-      //   return MaterialPageRoute(
-      //     builder: (_) {
-      //       initRecoverPasswordModule();
-      //       return const RecoverPasswordView();
-      //     },
-      //   );
-      // case Routes.verifyCodeScreen:
-      //   return MaterialPageRoute(
-      //     builder: (_) {
-      //       initVerifyCodeModule();
-      //       return const VerifyCodeView();
-      //     },
-      //   );
-      // case Routes.inTrainingScreen:
-      //   return MaterialPageRoute(
-      //     builder: (_) {
-      //       return const TrainingViewBar();
-      //     },
-      //   );
-      // // case Routes.changePasswordScreen:
-      // //   return MaterialPageRoute(
-      // //     builder: (_) {
-      // //       initChangePasswordModule();
-      // //       return const ChangePasswordView();
-      // //     },
-      // //   );
+      case Routes.editScreen :
+        return MaterialPageRoute(builder: (_){
+          return const EditColumnView();
+        });
       case Routes.mainScreen:
         return MaterialPageRoute(builder: (_) {
           initMainModule();
-          return  MainView();
+          return  const MainView();
         });
       // case Routes.profileDetailsScreen:
       //   return MaterialPageRoute(builder: (_) {

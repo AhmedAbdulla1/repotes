@@ -30,7 +30,7 @@ class _SplashViewState extends State<SplashView> {
         if (await _appPreferences.isPressKeyLoginScreen()) {
           Navigator.pushReplacementNamed(context, Routes.mainScreen);
         } else {
-          Navigator.pushReplacementNamed(context, Routes.mainScreen);
+          Navigator.pushReplacementNamed(context, Routes.loginScreen);
         }
       },
     );

@@ -6,10 +6,8 @@ import 'package:flutter/cupertino.dart';
 final AppPreferences _appPreferences = instance<AppPreferences>();
 
 class Constant {
-  static const String baseurl = "https://doctorhunt.pythonanywhere.com/";
+  static const String baseurl = "https://roayadesign.com/api_s/";
   static const String empty = "";
-  static const int userData = 0;
-  static const int exercises = 1;
 
   static String token = _appPreferences.getToken();
   static const int zero = 0;

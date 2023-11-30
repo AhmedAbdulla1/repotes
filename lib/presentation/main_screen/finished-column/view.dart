@@ -1,11 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:reports/presentation/common/reusable/custom_button.dart';
 import 'package:reports/presentation/common/state_render/state_renderer_imp.dart';
+import 'package:reports/presentation/edit_screen/view.dart';
 import 'package:reports/presentation/main_screen/finished-column/view_model.dart';
 import 'package:reports/presentation/resources/color_manager.dart';
 import 'package:reports/presentation/resources/font_manager.dart';
+import 'package:reports/presentation/resources/routes_manager.dart';
+import 'package:reports/presentation/resources/string_manager.dart';
 import 'package:reports/presentation/resources/values_manager.dart';
 
 class FinishedColumnView extends StatelessWidget {
@@ -24,18 +28,18 @@ class FinishedColumnView extends StatelessWidget {
 
   Widget _getContent() {
     return ListView.separated(
-      separatorBuilder: (context, index) => SizedBox(
+      separatorBuilder: (context, index) => const SizedBox(
         height: 20,
       ),
       itemCount: 6,
-      padding: EdgeInsets.all(
+      padding: const EdgeInsets.all(
         AppPadding.p16,
       ),
-      itemBuilder: (context, index) => _customItem(),
+      itemBuilder: (context, index) => _customItem(context),
     );
   }
 
-  Widget _customItem() {
+  Widget _customItem(BuildContext context) {
     return Container(
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
@@ -51,7 +55,7 @@ class FinishedColumnView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'اسم العمود',
+            AppStrings.columnName,
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: FontSize.s22,
@@ -83,17 +87,23 @@ class FinishedColumnView extends StatelessWidget {
                 Expanded(
                     child: customElevatedButtonWithoutStream(
                   onPressed: () {},
-                  child: const Text('حذف'),
+                  child: const Text(AppStrings.delete),
+                )),
+                Expanded(
+                    child: customElevatedButtonWithoutStream(
+                  onPressed: () {
+                    PersistentNavBarNavigator.pushNewScreen(
+                      context,
+                      withNavBar: false,
+                      screen: const EditColumnView(),
+                    );
+                  },
+                  child: const Text(AppStrings.edit),
                 )),
                 Expanded(
                     child: customElevatedButtonWithoutStream(
                   onPressed: () {},
-                  child: const Text('تعديل'),
-                )),
-                Expanded(
-                    child: customElevatedButtonWithoutStream(
-                  onPressed: () {},
-                  child: const Text('انهاء'),
+                  child: const Text(AppStrings.end),
                 )),
               ],
             ),
