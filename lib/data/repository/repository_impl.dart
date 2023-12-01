@@ -1,6 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:reports/app/constant.dart';
+import 'package:reports/data/data_source/lacal_database.dart';
 import 'package:reports/data/data_source/local_data_source.dart';
 import 'package:dartz/dartz.dart';
 import 'package:reports/data/data_source/remote_data_source.dart';
@@ -16,7 +20,7 @@ import 'package:reports/domain/repository/repository.dart';
 class RepositoryImpl implements Repository {
   // final LocalDataSource _localDataSource;
   Dio dio = Dio();
-  String url = "https://roayadesign.com/api_s/login.php";
+  String url = "${Constant.baseurl}login.php";
   final RemoteDataSource _remoteDataSource;
   final NetWorkInfo _networkInfo;
 
@@ -28,7 +32,7 @@ class RepositoryImpl implements Repository {
 
   @override
   Future<Either<Failure, String>> login(LoginRequest loginRequest) async {
-
+    print(url);
     FormData formData = FormData.fromMap({
       'username': loginRequest.email,
       'password': loginRequest.password,
@@ -52,7 +56,6 @@ class RepositoryImpl implements Repository {
             ),
           );
         }
-
       } catch (error) {
         print("12345600000000000000000 $error 000000000000000");
         return Left(
@@ -193,7 +196,32 @@ class RepositoryImpl implements Repository {
       );
     }
   }
+
+  @override
+  Future<Either<Failure, String>> addColumn(AddColumn addColumn) async {
+    var columnBox =Hive.box(Constant.mainBoxName);
+    try {
+      columnBox.add(
+        AddColumnModel(
+          columnName: addColumn.columnName,
+          latitude: addColumn.latitude,
+          longitude: addColumn.longitude,
+          images: addColumn.images,
+        ),
+      );
+      print(columnBox.values.toList());
+      return const Right('done');
+    } catch (error) {
+      print(error);
+      return Left(Failure(code: 0, message: "فشل الحفظ"));
+    }
+  }
+
+
+
 }
+
+
 
 // @override
 // Future<Either<Failure, String>> forgotPassword(String email) async {

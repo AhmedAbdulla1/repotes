@@ -9,48 +9,14 @@ class AppStrings {
   static const String after = 'بعد الانتهاء';
   static const String inner = "أثناء التنفيذ";
   static const String addImage = "إضافة صورة";
-  static const String addColumn  = "إضافة عمود ";
+  static const String addColumn = "إضافة عمود ";
   static const String nonFinishedColumn = "أعمدة غير منهية";
   static const String finishedColumn = 'أعمدة منتهية';
   static const String save = 'حفظ';
   static const String delete = 'حذف';
   static const String show = "عرض";
   static const String edit = 'تعديل';
-  static const String submit ='SUBMIT';
-  static const String verifyCodeTitle = "Verify Code";
-  static const String verifyCodeSubTitle = 'An authentication code has been sent to your email';
-  static const String verify ='VERIFY';
-  static const String enterCode ='Enter Code ';
-  static const String resendCode ="Didn’t receive a code?";
-  static const String resend = 'Resend';
-  static const String changePasswordTitle = 'Change Password';
-  static const String changePasswordSubTitle = "Create a new, strong password that you don’t use before" ;
-  static const String newPassword = 'New Password';
-  static const String confirmPassword = 'Confirm Password';
-  static const String profile = 'Profile';
-  static const String bodyWeight ='Body Weight';
-  static const String height ='Height';
-  static const String age = 'Age';
-  static const String gender= 'Gender';
-  static const String passwordError2 ="Your password could be stronger. Consider using uppercase letters and symbols.";
-  static const String bodyWeightError = 'Enter valid weight';
-  static const String heightError = 'Enter valid height';
-  static const String ageError = 'Enter valid age';
-  static const String updateProfile= 'Update Profile';
-  static const String exercises = 'Exercises';
-  static const String advanced = 'Advanced';
-  static const String selectWeight = 'Select your weight';
-  static const String large ="Large";
-  static const String small ="Small";
-  static const String autoStart ="Auto Start";
-  static const String idleTime ="Idle Time";
 
-
-
-  static const String skip = 'skip';
-  static const String name = 'Name';
-  static const String nameError1 = 'Please enter your name ';
-  static const String nameError2 = 'Please enter at least 3 characters ';
   static const String confirmError = 'Password not confirm';
   static const String userName = 'User Name';
   static const String emailError = 'برجاء ادخال اسم المستخدم ';
@@ -79,8 +45,8 @@ class AppStrings {
   static const String register = 'Not a member ? Sign Up';
   static const String reLogin = 'already member? sign in ';
   static const String loading = 'loading';
-  static const String ok = 'OK';
-  static const String retry = 'retry again';
+  static const String ok = 'حسنا';
+  static const String retry = 'حاول مجدداََ';
   static const profilePicture = "upload_profile_picture";
   static const photoGallery = "Photo From Galley";
   static const photoCamera = "Photo From Camera";
@@ -95,7 +61,7 @@ class AppStrings {
 
 
   static const String badRequestError = "Email has already been used";
-  static const String noContent = "no_content";
+  static const String noContent = "لايوجد انترنت";
   static const String forbiddenError = "forbidden_error";
   static const String unauthorizedError = "unauthorized_error";
   static const String notFoundError = "not_found_error";
@@ -103,19 +69,8 @@ class AppStrings {
   static const String internalServerError = "internal_server_error";
   static const String unknownError = "unknown_error";
   static const String timeoutError = "timeout_error";
-  static const String defaultError = "default_error";
+  static const String defaultError = "هناك خطاء ما";
   static const String cacheError = "cache_error";
-  static const String noInternetError = "No Internet";
+  static const String noInternetError = "لايوجد انترنت";
 
-  static const String privacyTitle = "Doctor Hunt Apps Privacy Policy";
-  static const String privacySubTitle1 =
-      "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words believable. It is a long established fact that reader will distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a moreIt is a long established fact that reader will distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more ";
-  static const String privacySubTitle2 =
-      "The standard chunk of lorem Ipsum used since  1500s is reproduced below for those interested.";
-  static const String privacySubTitle3 =
-      "Sections 1.10.32 and 1.10.33 from \"de Finibus Bonorum et Malorum. The point of using.";
-  static const String privacySubTitle4 =
-      "The point of using Lorem Ipsum is that it has a moreIt is a long established fact that reader will distracted.";
-  static const String privacySubTitle5 =
-      "It is a long established fact that reader distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a moreIt is a long established.";
 }

@@ -27,6 +27,21 @@ class _AddColumnViewState extends State<AddColumnView> {
   final TextEditingController _columnNameController = TextEditingController();
   final ImagePicker _imagePicker = ImagePicker();
 
+  void _bind() {
+    _viewModel.start();
+    _columnNameController.addListener(
+      () => _viewModel.setColumnName(
+        _columnNameController.text,
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    _bind();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<StateFlow>(
@@ -40,6 +55,7 @@ class _AddColumnViewState extends State<AddColumnView> {
           _getContent(),
     );
   }
+
   Widget _getContent() {
     return ListView(
       padding: EdgeInsets.all(AppPadding.p16.w),
@@ -54,6 +70,7 @@ class _AddColumnViewState extends State<AddColumnView> {
           onPressed: () {
             _viewModel.getLocation();
           },
+          height: AppSize.s65,
           child: Text(
             "الموقع",
             style: TextStyle(
@@ -71,7 +88,7 @@ class _AddColumnViewState extends State<AddColumnView> {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            StreamBuilder<File>(
+            StreamBuilder<File?>(
               stream: _viewModel.beforeImageOutput,
               builder: (context, snapshot) =>
                   _customItem(AppStrings.before, snapshot.data, 0),
@@ -79,7 +96,7 @@ class _AddColumnViewState extends State<AddColumnView> {
             SizedBox(
               width: AppSize.s20.w,
             ),
-            StreamBuilder<File>(
+            StreamBuilder<File?>(
               stream: _viewModel.innerImage1Output,
               builder: (context, snapshot) =>
                   _customItem(AppStrings.inner, snapshot.data, 1),
@@ -93,7 +110,7 @@ class _AddColumnViewState extends State<AddColumnView> {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            StreamBuilder<File>(
+            StreamBuilder<File?>(
               stream: _viewModel.innerImage2Output,
               builder: (context, snapshot) =>
                   _customItem(AppStrings.inner, snapshot.data, 2),
@@ -101,7 +118,7 @@ class _AddColumnViewState extends State<AddColumnView> {
             SizedBox(
               width: AppSize.s20.w,
             ),
-            StreamBuilder<File>(
+            StreamBuilder<File?>(
               stream: _viewModel.afterImageOutput,
               builder: (context, snapshot) =>
                   _customItem(AppStrings.after, snapshot.data, 3),
@@ -113,7 +130,9 @@ class _AddColumnViewState extends State<AddColumnView> {
         ),
         customElevatedButton(
           stream: _viewModel.allRightOutput,
-          onPressed: () {},
+          onPressed: () async {
+            await _viewModel.addToDatBase();
+          },
           text: AppStrings.end,
         ),
       ],
@@ -221,7 +240,7 @@ class _AddColumnViewState extends State<AddColumnView> {
                     style: TextStyle(color: ColorManager.primary),
                   ),
                   onTap: () {
-                    _imageFromGallery(num);
+                    _imageFromGallery(num, ImageSource.gallery);
                     Navigator.of(context).pop();
                   },
                 ),
@@ -236,7 +255,7 @@ class _AddColumnViewState extends State<AddColumnView> {
                     ),
                   ),
                   onTap: () {
-                    _imageFromCamera(num);
+                    _imageFromGallery(num, ImageSource.camera);
                     Navigator.of(context).pop();
                   },
                 )
@@ -248,44 +267,23 @@ class _AddColumnViewState extends State<AddColumnView> {
     );
   }
 
-  _imageFromGallery(int num) async {
-    var image = await _imagePicker.pickImage(source: ImageSource.gallery);
-    switch (num) {
-      case 0:
-        _viewModel.beforeImageInput.add(File(image?.path ?? ""));
-        return;
-      case 1:
-        _viewModel.innerImage1Input.add(File(image?.path ?? ""));
-        return;
-      case 2:
-        _viewModel.innerImage2Input.add(File(image?.path ?? ""));
-        return;
-      case 3:
-        _viewModel.afterImageInput.add(File(image?.path ?? ""));
-        return;
-      default:
-        return;
-    }
-  }
+  _imageFromGallery(int num, ImageSource imageSource) async {
 
-  _imageFromCamera(int num) async {
-    var image = await _imagePicker.pickImage(source: ImageSource.camera);
+    var image = await _imagePicker.pickImage(source: imageSource);
     switch (num) {
       case 0:
         _viewModel.beforeImageInput.add(File(image?.path ?? ""));
-        return;
       case 1:
         _viewModel.innerImage1Input.add(File(image?.path ?? ""));
-        return;
       case 2:
         _viewModel.innerImage2Input.add(File(image?.path ?? ""));
-        return;
       case 3:
         _viewModel.afterImageInput.add(File(image?.path ?? ""));
-        return;
       default:
         return;
     }
+      _viewModel.setImage(num, image);
+    return;
   }
 
   Widget _showImage(File? image) {

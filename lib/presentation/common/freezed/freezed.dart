@@ -1,6 +1,8 @@
 
 
 
+import 'dart:io';
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'freezed.freezed.dart';
 @freezed
@@ -25,12 +27,13 @@ class LoginObject with _$LoginObject{
       )=_LoginObject;
 }
 @freezed
-class ForgotPasswordObject with _$ForgotPasswordObject{
-  factory ForgotPasswordObject(
-      String email,
-      String otp,
-      String password,
-      )=_ForgotPasswordObject;
+class AddColumnObject with _$AddColumnObject{
+  factory AddColumnObject(
+      String columnName,
+      String latitude,
+      String longitude,
+      List<String> image,
+      )=_AddColumnObject;
 }
 
 @freezed

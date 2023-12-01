@@ -84,11 +84,9 @@ class LoginViewModel extends LoginViewModelOutput {
       );
     }, (data) async {
       await _appPreferences.setToken(data);
-      print(_appPreferences.getToken());
       inputState.add(
         ContentState(),
       );
-
       isUserLoginSuccessfullyStreamController.add(true);
     });
   }
@@ -137,7 +135,6 @@ class LoginViewModel extends LoginViewModelOutput {
   }
 
   bool _emailIsValid(String email) {
-    print(email);
     return email.isNotEmpty;
 
   }

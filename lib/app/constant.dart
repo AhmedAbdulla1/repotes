@@ -6,9 +6,10 @@ import 'package:flutter/cupertino.dart';
 final AppPreferences _appPreferences = instance<AppPreferences>();
 
 class Constant {
-  static const String baseurl = "https://roayadesign.com/api_s/";
+  static const String baseurl = "https://roayadesign.com/api_s/tqarer_a3meda_s3udia/";
   static const String empty = "";
-
+  static const String columnModel = "ColumnModel";
+  static const String mainBoxName = 'reportName';
   static String token = _appPreferences.getToken();
   static const int zero = 0;
   static const Duration timeout = Duration(milliseconds: 60000); //this time by ms

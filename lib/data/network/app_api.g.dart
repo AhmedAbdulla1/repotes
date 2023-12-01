@@ -13,7 +13,7 @@ class _AppServicesClient implements AppServicesClient {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'https://roayadesign.com/api_s/';
+    baseUrl ??= 'https://roayadesign.com/api_s/tqarer_a3meda_s3udia/';
   }
 
   final Dio _dio;

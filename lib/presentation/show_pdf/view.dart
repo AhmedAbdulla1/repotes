@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:typed_data';
-
+import 'package:image/image.dart' as img;
 import 'package:pdf/widgets.dart' as pw;
+import 'package:path_provider/path_provider.dart';
 
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 
@@ -21,13 +23,36 @@ class _ShowPDFViewState extends State<ShowPDFView> {
   List<File> _selectedImages = [];
   int _pdfPage = 0;
   bool _showPdf = false;
-
+  String url ='https://roayadesign.com/api_s/add.php';
   Future<void> _pickImages() async {
     List<XFile>? images = await ImagePicker().pickMultiImage();
     setState(() {
       _selectedImages = images.map((image) => File(image.path)).toList();
       _showPdf = false;
     });
+    print(_selectedImages[0].path);
+  }
+
+
+  Future<void> uploadFile(String filePath, String url) async {
+    final file = File(filePath);
+    final dio = Dio();
+
+    try {
+      FormData formData = FormData.fromMap({
+        'filename':'filename',
+        'pdf_data': await MultipartFile.fromFile(file.path,filename: 'new nam'),
+      });
+
+      Response response = await dio.post(url, data: formData);
+      if (response.statusCode == 200) {
+        print('File uploaded successfully!');
+      } else {
+        print('File upload failed with status ${response.statusCode}');
+      }
+    } catch (error) {
+      print('File upload failed: $error');
+    }
   }
 
   Future<Uint8List> _generatePdf() async {
@@ -101,7 +126,16 @@ class _ShowPDFViewState extends State<ShowPDFView> {
         },
       ),
     );
+    final directory = await getApplicationDocumentsDirectory();
+    final path = '${directory.path}/my_pdf.pdf';
+    print( "00000000000000000 $path 0000000000000000");
+    File file = File("/data/user/0/com.example.reports/cache/123");
 
+
+    await file.writeAsBytes(await pdf.save());
+    print("StartUpload");
+    await  uploadFile(file.path, url);
+    print('end upload');
     return pdf.save();
   }
 
@@ -136,6 +170,8 @@ class _ShowPDFViewState extends State<ShowPDFView> {
                     // print("000000000${pdfUtf.length}0000000");
                     // print(pdfUtf);
                     // // utf8.encode(pdfUtf);
+                    // Get the directory for saving the PDF file
+
                     print(pdfBytes);
                     setState(() {
                       _showPdf = true;

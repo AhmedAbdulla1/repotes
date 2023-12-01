@@ -388,30 +388,34 @@ abstract class _LoginObject implements LoginObject {
 }
 
 /// @nodoc
-mixin _$ForgotPasswordObject {
-  String get email => throw _privateConstructorUsedError;
-  String get otp => throw _privateConstructorUsedError;
-  String get password => throw _privateConstructorUsedError;
+mixin _$AddColumnObject {
+  String get columnName => throw _privateConstructorUsedError;
+  String get latitude => throw _privateConstructorUsedError;
+  String get longitude => throw _privateConstructorUsedError;
+  List<String> get image => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
-  $ForgotPasswordObjectCopyWith<ForgotPasswordObject> get copyWith =>
+  $AddColumnObjectCopyWith<AddColumnObject> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $ForgotPasswordObjectCopyWith<$Res> {
-  factory $ForgotPasswordObjectCopyWith(ForgotPasswordObject value,
-          $Res Function(ForgotPasswordObject) then) =
-      _$ForgotPasswordObjectCopyWithImpl<$Res, ForgotPasswordObject>;
+abstract class $AddColumnObjectCopyWith<$Res> {
+  factory $AddColumnObjectCopyWith(
+          AddColumnObject value, $Res Function(AddColumnObject) then) =
+      _$AddColumnObjectCopyWithImpl<$Res, AddColumnObject>;
   @useResult
-  $Res call({String email, String otp, String password});
+  $Res call(
+      {String columnName,
+      String latitude,
+      String longitude,
+      List<String> image});
 }
 
 /// @nodoc
-class _$ForgotPasswordObjectCopyWithImpl<$Res,
-        $Val extends ForgotPasswordObject>
-    implements $ForgotPasswordObjectCopyWith<$Res> {
-  _$ForgotPasswordObjectCopyWithImpl(this._value, this._then);
+class _$AddColumnObjectCopyWithImpl<$Res, $Val extends AddColumnObject>
+    implements $AddColumnObjectCopyWith<$Res> {
+  _$AddColumnObjectCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -421,125 +425,152 @@ class _$ForgotPasswordObjectCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? email = null,
-    Object? otp = null,
-    Object? password = null,
+    Object? columnName = null,
+    Object? latitude = null,
+    Object? longitude = null,
+    Object? image = null,
   }) {
     return _then(_value.copyWith(
-      email: null == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
+      columnName: null == columnName
+          ? _value.columnName
+          : columnName // ignore: cast_nullable_to_non_nullable
               as String,
-      otp: null == otp
-          ? _value.otp
-          : otp // ignore: cast_nullable_to_non_nullable
+      latitude: null == latitude
+          ? _value.latitude
+          : latitude // ignore: cast_nullable_to_non_nullable
               as String,
-      password: null == password
-          ? _value.password
-          : password // ignore: cast_nullable_to_non_nullable
+      longitude: null == longitude
+          ? _value.longitude
+          : longitude // ignore: cast_nullable_to_non_nullable
               as String,
+      image: null == image
+          ? _value.image
+          : image // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$ForgotPasswordObjectImplCopyWith<$Res>
-    implements $ForgotPasswordObjectCopyWith<$Res> {
-  factory _$$ForgotPasswordObjectImplCopyWith(_$ForgotPasswordObjectImpl value,
-          $Res Function(_$ForgotPasswordObjectImpl) then) =
-      __$$ForgotPasswordObjectImplCopyWithImpl<$Res>;
+abstract class _$$AddColumnObjectImplCopyWith<$Res>
+    implements $AddColumnObjectCopyWith<$Res> {
+  factory _$$AddColumnObjectImplCopyWith(_$AddColumnObjectImpl value,
+          $Res Function(_$AddColumnObjectImpl) then) =
+      __$$AddColumnObjectImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String email, String otp, String password});
+  $Res call(
+      {String columnName,
+      String latitude,
+      String longitude,
+      List<String> image});
 }
 
 /// @nodoc
-class __$$ForgotPasswordObjectImplCopyWithImpl<$Res>
-    extends _$ForgotPasswordObjectCopyWithImpl<$Res, _$ForgotPasswordObjectImpl>
-    implements _$$ForgotPasswordObjectImplCopyWith<$Res> {
-  __$$ForgotPasswordObjectImplCopyWithImpl(_$ForgotPasswordObjectImpl _value,
-      $Res Function(_$ForgotPasswordObjectImpl) _then)
+class __$$AddColumnObjectImplCopyWithImpl<$Res>
+    extends _$AddColumnObjectCopyWithImpl<$Res, _$AddColumnObjectImpl>
+    implements _$$AddColumnObjectImplCopyWith<$Res> {
+  __$$AddColumnObjectImplCopyWithImpl(
+      _$AddColumnObjectImpl _value, $Res Function(_$AddColumnObjectImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? email = null,
-    Object? otp = null,
-    Object? password = null,
+    Object? columnName = null,
+    Object? latitude = null,
+    Object? longitude = null,
+    Object? image = null,
   }) {
-    return _then(_$ForgotPasswordObjectImpl(
-      null == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
+    return _then(_$AddColumnObjectImpl(
+      null == columnName
+          ? _value.columnName
+          : columnName // ignore: cast_nullable_to_non_nullable
               as String,
-      null == otp
-          ? _value.otp
-          : otp // ignore: cast_nullable_to_non_nullable
+      null == latitude
+          ? _value.latitude
+          : latitude // ignore: cast_nullable_to_non_nullable
               as String,
-      null == password
-          ? _value.password
-          : password // ignore: cast_nullable_to_non_nullable
+      null == longitude
+          ? _value.longitude
+          : longitude // ignore: cast_nullable_to_non_nullable
               as String,
+      null == image
+          ? _value._image
+          : image // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ));
   }
 }
 
 /// @nodoc
 
-class _$ForgotPasswordObjectImpl implements _ForgotPasswordObject {
-  _$ForgotPasswordObjectImpl(this.email, this.otp, this.password);
+class _$AddColumnObjectImpl implements _AddColumnObject {
+  _$AddColumnObjectImpl(
+      this.columnName, this.latitude, this.longitude, final List<String> image)
+      : _image = image;
 
   @override
-  final String email;
+  final String columnName;
   @override
-  final String otp;
+  final String latitude;
   @override
-  final String password;
+  final String longitude;
+  final List<String> _image;
+  @override
+  List<String> get image {
+    if (_image is EqualUnmodifiableListView) return _image;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_image);
+  }
 
   @override
   String toString() {
-    return 'ForgotPasswordObject(email: $email, otp: $otp, password: $password)';
+    return 'AddColumnObject(columnName: $columnName, latitude: $latitude, longitude: $longitude, image: $image)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ForgotPasswordObjectImpl &&
-            (identical(other.email, email) || other.email == email) &&
-            (identical(other.otp, otp) || other.otp == otp) &&
-            (identical(other.password, password) ||
-                other.password == password));
+            other is _$AddColumnObjectImpl &&
+            (identical(other.columnName, columnName) ||
+                other.columnName == columnName) &&
+            (identical(other.latitude, latitude) ||
+                other.latitude == latitude) &&
+            (identical(other.longitude, longitude) ||
+                other.longitude == longitude) &&
+            const DeepCollectionEquality().equals(other._image, _image));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, email, otp, password);
+  int get hashCode => Object.hash(runtimeType, columnName, latitude, longitude,
+      const DeepCollectionEquality().hash(_image));
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$ForgotPasswordObjectImplCopyWith<_$ForgotPasswordObjectImpl>
-      get copyWith =>
-          __$$ForgotPasswordObjectImplCopyWithImpl<_$ForgotPasswordObjectImpl>(
-              this, _$identity);
+  _$$AddColumnObjectImplCopyWith<_$AddColumnObjectImpl> get copyWith =>
+      __$$AddColumnObjectImplCopyWithImpl<_$AddColumnObjectImpl>(
+          this, _$identity);
 }
 
-abstract class _ForgotPasswordObject implements ForgotPasswordObject {
-  factory _ForgotPasswordObject(
-          final String email, final String otp, final String password) =
-      _$ForgotPasswordObjectImpl;
+abstract class _AddColumnObject implements AddColumnObject {
+  factory _AddColumnObject(final String columnName, final String latitude,
+      final String longitude, final List<String> image) = _$AddColumnObjectImpl;
 
   @override
-  String get email;
+  String get columnName;
   @override
-  String get otp;
+  String get latitude;
   @override
-  String get password;
+  String get longitude;
+  @override
+  List<String> get image;
   @override
   @JsonKey(ignore: true)
-  _$$ForgotPasswordObjectImplCopyWith<_$ForgotPasswordObjectImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  _$$AddColumnObjectImplCopyWith<_$AddColumnObjectImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc

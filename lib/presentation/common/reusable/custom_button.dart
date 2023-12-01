@@ -33,9 +33,10 @@ Widget customElevatedButton({
 Widget customElevatedButtonWithoutStream({
   required VoidCallback onPressed,
   required Widget child,
+  double height = AppSize.s55 ,
 }) {
   return SizedBox(
-      height: AppSize.s55,
+      height: height,
       width: double.infinity,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: AppPadding.p12,vertical: AppPadding.p8),

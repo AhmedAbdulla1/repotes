@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:reports/presentation/resources/assets_manager.dart';
 import 'package:reports/presentation/resources/color_manager.dart';
 import 'package:reports/presentation/resources/font_manager.dart';
@@ -50,6 +51,7 @@ class StateRenderer extends StatelessWidget {
         return _getPopUpDialog(
           [
             _getAnimatedImage(JsonAssets.error),
+            SizedBox(height: 10.h,),
             _getMessage(),
             _getRetryButton(AppStrings.retry),
           ],
@@ -58,18 +60,21 @@ class StateRenderer extends StatelessWidget {
         return _getPopUpDialog(
           [
             _getAnimatedImage(JsonAssets.loading),
+            SizedBox(height: 10.h,),
             _getMessage(),
           ],
         );
       case StateRenderType.popupSuccessState:
         return _getPopUpDialog([
           _getAnimatedImage(JsonAssets.success),
+          SizedBox(height: 10.h,),
           _getMessage(),
           _getRetryButton(AppStrings.ok)
         ]);
       case StateRenderType.fullScreenErrorState:
         return _getItemColumn([
           _getAnimatedImage(JsonAssets.error),
+          SizedBox(height: 10.h,),
           _getMessage(),
           _getRetryButton(AppStrings.retry),
         ]);
@@ -77,6 +82,7 @@ class StateRenderer extends StatelessWidget {
         return _getItemColumn(
           [
             _getAnimatedImage(JsonAssets.loading),
+            SizedBox(height: 10.h,),
             _getMessage(),
           ],
         );
@@ -85,6 +91,7 @@ class StateRenderer extends StatelessWidget {
         return _getItemColumn(
           [
             _getAnimatedImage(JsonAssets.empty),
+            SizedBox(height: 10.h,),
             _getMessage(),
           ],
         );
@@ -143,7 +150,7 @@ class StateRenderer extends StatelessWidget {
       message,
       style: getMessageStyle(
         color: ColorManager.black,
-        fontSize: FontSize.s12,
+        fontSize: FontSize.s16,
       ),
       textAlign: TextAlign.center,
     );

@@ -1,7 +1,15 @@
 import 'dart:io';
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:reports/app/constant.dart';
+import 'package:reports/app/di.dart';
+import 'package:reports/data/data_source/lacal_database.dart';
+import 'package:reports/domain/models/models.dart';
+import 'package:reports/domain/repository/repository.dart';
+import 'package:reports/domain/usecase/add_coulumn_usecase.dart';
 import 'package:reports/presentation/base/base_view_model.dart';
+import 'package:reports/presentation/common/freezed/freezed.dart';
 import 'package:reports/presentation/common/state_render/state_render.dart';
 import 'package:reports/presentation/common/state_render/state_renderer_imp.dart';
 import 'package:rxdart/rxdart.dart';
@@ -9,19 +17,29 @@ import 'package:rxdart/rxdart.dart';
 class AddColumnViewModel extends AddColumnViewModelInput {
   final StreamController<String> _columnStreamController =
       StreamController<String>.broadcast();
-  final StreamController<bool> _allRightStreamController =
-      StreamController<bool>.broadcast();
-  final StreamController<File> _afterImageStreamController =
-      StreamController<File>.broadcast();
-  final StreamController<File> _innerImage1StreamController =
-      StreamController<File>.broadcast();
-  final StreamController<File> _innerImage2StreamController =
-      StreamController<File>.broadcast();
-  final StreamController<File> _beforeImageStreamController =
-      StreamController<File>.broadcast();
+  final StreamController<void> _allRightStreamController =
+      StreamController<void>.broadcast();
+  final StreamController<File?> _afterImageStreamController =
+      StreamController<File?>.broadcast();
+  final StreamController<File?> _innerImage1StreamController =
+      StreamController<File?>.broadcast();
+  final StreamController<File?> _innerImage2StreamController =
+      StreamController<File?>.broadcast();
+  final StreamController<File?> _beforeImageStreamController =
+      StreamController<File?>.broadcast();
+  final AddColumnUsecase _usecase = AddColumnUsecase(instance<Repository>());
+  List<String> images = [
+    "",
+    "",
+    "",
+    "",
+  ];
 
   @override
-  void start() {
+  void start() async {
+    // inputState
+    //     .add(LoadingState(stateRenderType: StateRenderType.popupLoadingState));
+    // await getLocation();
     inputState.add(ContentState());
   }
 
@@ -33,81 +51,118 @@ class AddColumnViewModel extends AddColumnViewModelInput {
 
   @override
   setColumnName(String name) {
-    // TODO: implement setColumnName
-    throw UnimplementedError();
+    addColumnObject = addColumnObject.copyWith(columnName: name);
+    _allRightStreamController.add(null);
   }
 
   @override
-  // TODO: implement allRightInput
   Sink get allRightInput => _allRightStreamController.sink;
 
   @override
-  // TODO: implement allRightOutput
-  Stream<bool> get allRightOutput => _allRightStreamController.stream;
+  Stream<bool> get allRightOutput =>
+      _allRightStreamController.stream.map((event) => _areInputValid());
 
   @override
-  // TODO: implement afterImageInput
   Sink get afterImageInput => _afterImageStreamController.sink;
 
   @override
-  // TODO: implement afterImageOutput
-  Stream<File> get afterImageOutput => _afterImageStreamController.stream;
+  Stream<File?> get afterImageOutput => _afterImageStreamController.stream;
 
   @override
-  // TODO: implement beforeImageInput
   Sink get beforeImageInput => _beforeImageStreamController.sink;
 
   @override
-  // TODO: implement beforeImageOutput
-  Stream<File> get beforeImageOutput => _beforeImageStreamController.stream;
+  Stream<File?> get beforeImageOutput => _beforeImageStreamController.stream;
 
   @override
-  // TODO: implement innerImage1Input
-  Sink<File> get innerImage1Input => throw _innerImage1StreamController.sink;
+  Sink get innerImage1Input => _innerImage1StreamController.sink;
 
   @override
-  // TODO: implement innerImage1Output
-  Stream<File> get innerImage1Output => _innerImage1StreamController.stream;
+  Stream<File?> get innerImage1Output => _innerImage1StreamController.stream;
 
   @override
-  // TODO: implement innerImage1Input
-  Sink<File> get innerImage2Input => throw _innerImage1StreamController.sink;
+  Sink get innerImage2Input => _innerImage2StreamController.sink;
 
   @override
-  // TODO: implement innerImage2Output
-  Stream<File> get innerImage2Output => _innerImage2StreamController.stream;
+  Stream<File?> get innerImage2Output => _innerImage2StreamController.stream;
+  AddColumnObject addColumnObject = AddColumnObject("", "", "", []);
 
   @override
-  getLocation() async{
+  getLocation() async {
+    try {
       await checkLocationPermission();
-      inputState.add(LoadingState(stateRenderType: StateRenderType.popupLoadingState));
-      try {
-        Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high,
-        );
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      addColumnObject = addColumnObject.copyWith(
+        longitude: position.longitude.toString(),
+        latitude: position.latitude.toString(),
+      );
+      _allRightStreamController.add(null);
+      print("Latitude: ${position.latitude}, Longitude: ${position.longitude}");
+    } catch (e) {
+      print(e);
+    }
+  }
 
-        inputState.add(ContentState());
-         String locationMessage =
-          "Latitude: ${position.latitude}, Longitude: ${position.longitude}";
-          print(locationMessage);
-      } catch (e) {
-        print(e);
-      }
+  setImage(int index, image) {
+    images[index] = image?.path ?? "";
+    addColumnObject = addColumnObject.copyWith(image: images);
+    _allRightStreamController.add(null);
+    print(images);
+  }
+
+  @override
+  addToDatBase() async {
+    // inputState
+    //     .add(LoadingState(stateRenderType: StateRenderType.popupLoadingState));
+    (await _usecase.execute(
+      AddColumnUsecaseInput(
+        columnName: addColumnObject.columnName,
+        images: addColumnObject.image,
+        latitude: addColumnObject.latitude,
+        longitude: addColumnObject.longitude,
+      ),
+    ))
+        .fold((l) {
+      inputState.add(ErrorState(
+          stateRenderType: StateRenderType.popupErrorState,
+          message: "فشل الحفظ"));
+    }, (r) {
+      print('0000000......... end 0000000000000000000000000');
+      // inputState.add(ContentState());
+      print(inputState.toString());
+    });
+    // afterImageOutput.mapTo(null);
+    // // afterImageInput.add(null);
+    // beforeImageOutput.mapTo(null);
+    // innerImage2Output.mapTo(null);
+    // innerImage1Output.mapTo(null);
+  }
+
+  bool _areInputValid() {
+    return addColumnObject.columnName.isNotEmpty &&
+        addColumnObject.longitude.isNotEmpty &&
+        addColumnObject.image.isNotEmpty;
   }
 }
 
 abstract class AddColumnViewModelInput extends AddColumnViewModelOutput {
   setColumnName(String name);
+
   getLocation();
+
+  addToDatBase();
+
   Sink get columnNameInput;
 
   Sink get allRightInput;
 
   Sink get afterImageInput;
 
-  Sink<File> get innerImage1Input;
+  Sink get innerImage1Input;
 
-  Sink<File> get innerImage2Input;
+  Sink get innerImage2Input;
 
   Sink get beforeImageInput;
 }
@@ -117,14 +172,15 @@ abstract class AddColumnViewModelOutput extends BaseViewModel {
 
   Stream<bool> get allRightOutput;
 
-  Stream<File> get afterImageOutput;
+  Stream<File?> get afterImageOutput;
 
-  Stream<File> get innerImage1Output;
+  Stream<File?> get innerImage1Output;
 
-  Stream<File> get innerImage2Output;
+  Stream<File?> get innerImage2Output;
 
-  Stream<File> get beforeImageOutput;
+  Stream<File?> get beforeImageOutput;
 }
+
 Future<void> checkLocationPermission() async {
   LocationPermission permission = await Geolocator.checkPermission();
 

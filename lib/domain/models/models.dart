@@ -3,12 +3,14 @@ import 'dart:io';
 // Add Column  model
 class AddColumn {
   String columnName ;
-  List<File> images ;
-  String location;
+  List<String> images ;
+  String latitude;
+  String longitude;
   AddColumn({
     required this.columnName,
     required this.images,
-    required this.location,
+    required this.latitude,
+    required this.longitude
   });
 }
 
