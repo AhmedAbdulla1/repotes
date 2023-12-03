@@ -1,20 +1,41 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:reports/app/di.dart';
+import 'package:reports/data/data_source/lacal_database.dart';
 import 'package:reports/presentation/common/reusable/custom_button.dart';
 import 'package:reports/presentation/common/state_render/state_renderer_imp.dart';
 import 'package:reports/presentation/edit_screen/view.dart';
 import 'package:reports/presentation/main_screen/finished-column/view_model.dart';
 import 'package:reports/presentation/resources/color_manager.dart';
 import 'package:reports/presentation/resources/font_manager.dart';
-import 'package:reports/presentation/resources/routes_manager.dart';
 import 'package:reports/presentation/resources/string_manager.dart';
 import 'package:reports/presentation/resources/values_manager.dart';
 
-class FinishedColumnView extends StatelessWidget {
-  FinishedColumnView({Key? key}) : super(key: key);
-  final FinishedColumnViewModel _viewModel = FinishedColumnViewModel();
+class FinishedColumnView extends StatefulWidget {
+  const FinishedColumnView({Key? key}) : super(key: key);
+
+  @override
+  State<FinishedColumnView> createState() => _FinishedColumnViewState();
+}
+
+class _FinishedColumnViewState extends State<FinishedColumnView> {
+  final FinishedColumnViewModel _viewModel =
+      instance<FinishedColumnViewModel>();
+
+  @override
+  void initState() {
+    _viewModel.start();
+    super.initState();
+  }
+  @override
+  void dispose() {
+    _viewModel.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,19 +48,37 @@ class FinishedColumnView extends StatelessWidget {
   }
 
   Widget _getContent() {
-    return ListView.separated(
-      separatorBuilder: (context, index) => const SizedBox(
-        height: 20,
-      ),
-      itemCount: 6,
-      padding: const EdgeInsets.all(
-        AppPadding.p16,
-      ),
-      itemBuilder: (context, index) => _customItem(context),
-    );
+    return StreamBuilder<List<AddColumnModel>>(
+        stream: _viewModel.dataController.stream,
+        builder: (context, snapshot) {
+          print("snapshot ${snapshot.data}");
+          return snapshot.data != null && snapshot.data!.isNotEmpty
+              ? ListView.separated(
+                  separatorBuilder: (context, index) => const SizedBox(
+                    height: 20,
+                  ),
+                  itemCount: snapshot.data!.length,
+                  padding: const EdgeInsets.all(
+                    AppPadding.p16,
+                  ),
+                  itemBuilder: (context, index) =>
+                      _customItem(context, index, snapshot.data!),
+                )
+              : Center(
+                  child: Text(
+                    'لاتوجد بيانات ',
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                );
+        });
   }
 
-  Widget _customItem(BuildContext context) {
+
+
+  Widget _customItem(BuildContext context, int i, List<AddColumnModel> data) {
+    List<String> newImages= data[i].images;
+    newImages.remove('');
+
     return Container(
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
@@ -73,8 +112,9 @@ class FinishedColumnView extends StatelessWidget {
                   width: MediaQuery.of(context).size.width * 0.03,
                 ),
                 scrollDirection: Axis.horizontal,
-                itemCount: 4,
-                itemBuilder: (context, index) => _customContainer(),
+                itemCount: newImages.length,
+                itemBuilder: (context, index) =>
+                    _customContainer(data[i].images[index]),
               ),
             ),
           ),
@@ -86,7 +126,9 @@ class FinishedColumnView extends StatelessWidget {
               children: [
                 Expanded(
                     child: customElevatedButtonWithoutStream(
-                  onPressed: () {},
+                  onPressed: () {
+                    _viewModel.deleteDAta(i);
+                  },
                   child: const Text(AppStrings.delete),
                 )),
                 Expanded(
@@ -113,11 +155,12 @@ class FinishedColumnView extends StatelessWidget {
     );
   }
 
-  Widget _customContainer() {
+  Widget _customContainer(String image) {
     return Builder(builder: (context) {
       return Container(
         width: MediaQuery.sizeOf(context).width * 0.19,
         height: double.infinity,
+        clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
             color: ColorManager.lightGreen,
             borderRadius: BorderRadius.circular(
@@ -130,6 +173,7 @@ class FinishedColumnView extends StatelessWidget {
                 offset: const Offset(4, 6),
               )
             ]),
+        child: Image.file(File(image),fit: BoxFit.cover,),
       );
     });
   }

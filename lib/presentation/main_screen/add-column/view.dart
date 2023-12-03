@@ -132,6 +132,7 @@ class _AddColumnViewState extends State<AddColumnView> {
           stream: _viewModel.allRightOutput,
           onPressed: () async {
             await _viewModel.addToDatBase();
+            _columnNameController.text='';
           },
           text: AppStrings.end,
         ),

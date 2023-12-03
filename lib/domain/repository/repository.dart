@@ -7,7 +7,6 @@ import 'package:reports/domain/models/models.dart';
 abstract class Repository {
   Future<Either<Failure, String>> login(LoginRequest loginRequest);
   Future<Either<Failure, String>> addColumn (AddColumn addColumn);
-
   // Forgot password
   // Future<Either<Failure, void>> sendEmail(String email);
   // Future<Either<Failure, String>> restPassword(RestPasswordRequest restPasswordRequest);

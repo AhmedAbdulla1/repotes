@@ -199,7 +199,7 @@ class RepositoryImpl implements Repository {
 
   @override
   Future<Either<Failure, String>> addColumn(AddColumn addColumn) async {
-    var columnBox =Hive.box(Constant.mainBoxName);
+    var columnBox =Hive.box<AddColumnModel>(Constant.mainBoxName);
     try {
       columnBox.add(
         AddColumnModel(

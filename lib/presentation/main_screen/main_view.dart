@@ -8,6 +8,7 @@ import 'package:reports/app/di.dart';
 import 'package:reports/presentation/main_screen/add-column/view.dart';
 import 'package:reports/presentation/main_screen/ended-column/view.dart';
 import 'package:reports/presentation/main_screen/finished-column/view.dart';
+import 'package:reports/presentation/main_screen/finished-column/view_model.dart';
 import 'package:reports/presentation/main_screen/main_view_model.dart';
 import 'package:reports/presentation/resources/color_manager.dart';
 import 'package:reports/presentation/resources/routes_manager.dart';
@@ -25,7 +26,7 @@ class _MainViewState extends State<MainView> {
   final MainViewModel _viewModel = MainViewModel();
 
   final AppPreferences appPreferences = instance<AppPreferences>();
-
+  final FinishedColumnViewModel _finishedColumnViewModel =instance<FinishedColumnViewModel>();
   final PersistentTabController _controller = PersistentTabController();
 
   List<String> appBarTitle = [
@@ -129,6 +130,12 @@ class _MainViewState extends State<MainView> {
           resizeToAvoidBottomInset: true,
           stateManagement: true,
           hideNavigationBarWhenKeyboardShows: true,
+          onItemSelected: (index){
+            if(index==1) {
+              print('ahmed');
+              _finishedColumnViewModel.getData();
+            }
+          },
           // hideNavigationBar: true,
         ),
       ),

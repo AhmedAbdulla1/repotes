@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
@@ -89,6 +90,7 @@ class AddColumnViewModel extends AddColumnViewModelInput {
 
   @override
   getLocation() async {
+    inputState.add(LoadingState(stateRenderType: StateRenderType.popupLoadingState));
     try {
       await checkLocationPermission();
       Position position = await Geolocator.getCurrentPosition(
@@ -98,24 +100,35 @@ class AddColumnViewModel extends AddColumnViewModelInput {
         longitude: position.longitude.toString(),
         latitude: position.latitude.toString(),
       );
+      inputState.add(ContentState());
       _allRightStreamController.add(null);
       print("Latitude: ${position.latitude}, Longitude: ${position.longitude}");
     } catch (e) {
+      inputState.add(ErrorState(stateRenderType: StateRenderType.popupErrorState, message: e.toString()));
       print(e);
     }
   }
 
   setImage(int index, image) {
-    images[index] = image?.path ?? "";
+    images = image?.path ?? "";
     addColumnObject = addColumnObject.copyWith(image: images);
     _allRightStreamController.add(null);
     print(images);
   }
-
+  @override
+  void dispose() {
+    _allRightStreamController.close();
+    _beforeImageStreamController.close();
+    _innerImage2StreamController.close();
+    _innerImage1StreamController.close();
+    _afterImageStreamController.close();
+    _columnStreamController.close();
+    super.dispose();
+  }
   @override
   addToDatBase() async {
-    // inputState
-    //     .add(LoadingState(stateRenderType: StateRenderType.popupLoadingState));
+    inputState
+        .add(LoadingState(stateRenderType: StateRenderType.popupLoadingState));
     (await _usecase.execute(
       AddColumnUsecaseInput(
         columnName: addColumnObject.columnName,
@@ -127,20 +140,26 @@ class AddColumnViewModel extends AddColumnViewModelInput {
         .fold((l) {
       inputState.add(ErrorState(
           stateRenderType: StateRenderType.popupErrorState,
-          message: "فشل الحفظ"));
+          message: "فشل الحفظ",),
+      );
     }, (r) {
       print('0000000......... end 0000000000000000000000000');
-      // inputState.add(ContentState());
+      inputState.add(SuccessState("تم الحفظ "));
       print(inputState.toString());
     });
-    // afterImageOutput.mapTo(null);
-    // // afterImageInput.add(null);
-    // beforeImageOutput.mapTo(null);
-    // innerImage2Output.mapTo(null);
-    // innerImage1Output.mapTo(null);
+    _afterImageStreamController.sink.add(null);
+    _innerImage1StreamController.sink.add(null);
+    _innerImage2StreamController.sink.add(null);
+    _beforeImageStreamController.sink.add(null);
+    _allRightStreamController.add(null);
+    addColumnObject = addColumnObject
+        .copyWith(columnName: '', latitude: '', longitude: '', image: []);
   }
 
   bool _areInputValid() {
+    print("=== column name ${addColumnObject.columnName.isNotEmpty}====");
+    print("=== long ${addColumnObject.longitude.isNotEmpty}=====");
+    print("=== image  ${addColumnObject.image.isNotEmpty} ======");
     return addColumnObject.columnName.isNotEmpty &&
         addColumnObject.longitude.isNotEmpty &&
         addColumnObject.image.isNotEmpty;

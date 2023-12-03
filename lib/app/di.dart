@@ -1,5 +1,5 @@
 import 'package:reports/data/data_source/local_data_source.dart';
-import 'package:reports/domain/usecase/dashboard_usecase.dart';
+import 'package:reports/domain/usecase/finished_column_usecase.dart';
 import 'package:reports/presentation/login_screen/view_model/login_view_model.dart';
 
 // import 'package:reports/presentation/main_screen/main_view_model.dart';
@@ -23,6 +23,7 @@ import 'package:reports/domain/usecase/login_usecase.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:reports/presentation/main_screen/add-column/view_model.dart';
+import 'package:reports/presentation/main_screen/finished-column/view_model.dart';
 import 'package:reports/presentation/main_screen/main_view_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -98,17 +99,10 @@ initLoginModule() {
 
 //
 
-// initRecoverPasswordModule() {
-//   if (!GetIt.I.isRegistered<RecoverPasswordUseCase>()) {
-//     instance.registerFactory<RecoverPasswordUseCase>(
-//       () => RecoverPasswordUseCase(
-//         instance<Repository>(),
-//       ),
-//     );
-//     instance.registerFactory<RecoverPasswordViewModel>(
-//       () => RecoverPasswordViewModel(
-//         instance<RecoverPasswordUseCase>(),
-//       ),
+// initFinishedColumnModule() {
+//   if (!GetIt.I.isRegistered<FinishedColumnViewModel>()) {
+//     instance.registerFactory<FinishedColumnViewModel>(
+//       () => FinishedColumnViewModel(),
 //     );
 //   }
 // }
@@ -148,9 +142,12 @@ initMainModule() {
   }
   if (!GetIt.I.isRegistered<AddColumnViewModel>()) {
     instance.registerFactory<AddColumnViewModel>(
-          () =>
-          AddColumnViewModel(
-          ),
+      () => AddColumnViewModel(),
+    );
+  }
+  if (!GetIt.I.isRegistered<FinishedColumnViewModel>()) {
+    instance.registerFactory<FinishedColumnViewModel>(
+          () => FinishedColumnViewModel(),
     );
   }
 }
