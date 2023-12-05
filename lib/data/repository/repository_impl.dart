@@ -16,6 +16,7 @@ import 'package:reports/data/network/requests.dart';
 import 'package:reports/data/response/responses.dart';
 import 'package:reports/domain/models/models.dart';
 import 'package:reports/domain/repository/repository.dart';
+import 'package:reports/presentation/resources/string_manager.dart';
 
 class RepositoryImpl implements Repository {
   // final LocalDataSource _localDataSource;
@@ -199,7 +200,8 @@ class RepositoryImpl implements Repository {
 
   @override
   Future<Either<Failure, String>> addColumn(AddColumn addColumn) async {
-    var columnBox =Hive.box<AddColumnModel>(Constant.mainBoxName);
+    Box columnBox = Hive.box<AddColumnModel>(Constant.mainBoxName);
+    print("before ${addColumn.images}");
     try {
       columnBox.add(
         AddColumnModel(

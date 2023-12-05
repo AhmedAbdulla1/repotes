@@ -13,6 +13,7 @@ void main() async {
   await Hive.initFlutter(document.path);
   Hive.registerAdapter(AddColumnModelAdapter());
   await Hive.openBox<AddColumnModel>(Constant.mainBoxName);
+  await Hive.openBox<String>(Constant.pdfName);
   runApp(MyApp());
 }
 

@@ -36,10 +36,10 @@ class RouteGenerator {
             return const LoginView();
           },
         );
-      case Routes.editScreen :
-        return MaterialPageRoute(builder: (_){
-          return const EditColumnView();
-        });
+      // case Routes.editScreen :
+      //   return MaterialPageRoute(builder: (_){
+      //     return const EditColumnView();
+      //   });
       case Routes.mainScreen:
         return MaterialPageRoute(builder: (_) {
           initMainModule();

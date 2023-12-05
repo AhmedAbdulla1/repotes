@@ -1,9 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:reports/app/constant.dart';
+import 'package:reports/app/di.dart';
 
 import 'package:reports/presentation/common/reusable/custom_button.dart';
 import 'package:reports/presentation/common/state_render/state_renderer_imp.dart';
@@ -14,35 +18,76 @@ import 'package:reports/presentation/resources/string_manager.dart';
 import 'package:reports/presentation/resources/values_manager.dart';
 import 'package:reports/presentation/show_pdf/view.dart';
 
-class EndedColumnView extends StatelessWidget {
-  EndedColumnView({Key? key}) : super(key: key);
-  final EndedColumnViewModel _viewModel = EndedColumnViewModel();
+class EndedColumnView extends StatefulWidget {
+  const EndedColumnView({Key? key}) : super(key: key);
+
+  @override
+  State<EndedColumnView> createState() => _EndedColumnViewState();
+}
+
+class _EndedColumnViewState extends State<EndedColumnView> {
+  // final EndedColumnViewModel _viewModel = EndedColumnViewModel();
+  final Box box = Hive.box<String>(Constant.pdfName);
+  late List<String> allData;
+
+  @override
+  void initState() {
+    allData = box.values.toList() as List<String>;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<StateFlow>(
-      stream: _viewModel.outputState,
-      builder: (context, snapshot) =>
-          snapshot.data?.getScreenWidget(
-            context,
-            _getContent(),
-            () {},
-          ) ??
-          _getContent(),
-    );
+    return _getContent();
   }
 
   Widget _getContent() {
-    return ListView.separated(
-        padding: EdgeInsets.all(AppPadding.p16.w),
-        itemBuilder: (context, index) => _customItem(context),
-        separatorBuilder: (context, index) => SizedBox(
-              height: AppSize.s16.h,
-            ),
-        itemCount: 30);
+    print(allData.length);
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: customElevatedButtonWithoutStream(
+            height: AppSize.s65,
+            onPressed: () {
+              setState(() {
+                allData = box.values.toList() as List<String>;
+              });
+            },
+            child:  Text("تحديث",style: TextStyle(
+                color: Colors.white,
+                fontSize: FontSize.s24,
+                fontWeight: FontWeight.bold
+            ),),
+          ),
+        ),
+        Expanded(
+          child: allData.isNotEmpty
+              ? ListView.separated(
+                  separatorBuilder: (context, index) => SizedBox(
+                    height: 20.h,
+                  ),
+                  itemCount: allData.length,
+                  padding: EdgeInsets.all(
+                    AppPadding.p16.w,
+                  ),
+                  itemBuilder: (context, index) =>
+                      _customItem(context, index, allData[index]),
+                )
+              : Center(
+                  child: Text(
+                    'لاتوجد بيانات ',
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                ),
+        ),
+      ],
+    );
   }
 
-  Widget _customItem(BuildContext context) {
+  Widget _customItem(BuildContext context, int index, String pdfPath) {
+    String fileName = Uri.file(pdfPath).pathSegments.last;
+    print(fileName);
     return Container(
       decoration: BoxDecoration(
           color: ColorManager.white,
@@ -56,45 +101,126 @@ class EndedColumnView extends StatelessWidget {
               offset: const Offset(0, 5),
             )
           ]),
-      child: Row(
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(AppPadding.p8),
-            child: Icon(
-              Icons.picture_as_pdf_sharp,
+      child: Padding(
+        padding: EdgeInsets.all(AppPadding.p8.h),
+        child: Row(
+          children: [
+            const SizedBox(
+              width: 4,
             ),
-          ),
-          Expanded(
-              flex: 4,
+            Expanded(
+              flex: 6,
               child: Text(
-                'اسم العمود524878 ',
+                fileName,
                 style: TextStyle(fontSize: FontSize.s24),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
-              )),
-          Expanded(
-            flex: 3,
-            child: customElevatedButtonWithoutStream(
-              onPressed: () {
-                PersistentNavBarNavigator.pushNewScreen(
-                  context,
-                  withNavBar: false,
-                  screen: const ShowPDFView(),
-                );
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: ElevatedButton(
+                onPressed: () {
+                  PersistentNavBarNavigator.pushNewScreen(
+                    context,
+                    withNavBar: false,
+                    screen: ShowPDFView(
+                      state: false,
+                      index: index,
+                      filepath: pdfPath,
+                    ),
+                  );
+                },
+                child: const Icon(
+                  Icons.file_open,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            SizedBox(width: AppSize.s8,),
 
-              },
-              child: const Text(AppStrings.show),
+
+            Expanded(
+              flex: 3,
+              child: ElevatedButton(
+                onPressed: () async {
+                  print(index);
+                  print(box.getAt(index));
+
+                  await action(fileName, "1").then((value) {
+                    setState(() {
+                      box.deleteAt(index);
+                      allData = box.values.toList() as List<String>;
+                    });
+                  });
+                },
+                child: const Icon(
+                  Icons.file_download_done_rounded,
+                  color: Colors.white,
+                ),
+              ),
             ),
-          ),
-          Expanded(
-            flex: 3,
-            child: customElevatedButtonWithoutStream(
-              onPressed: () {},
-              child: const Text(AppStrings.delete),
+            SizedBox(width: AppSize.s8,),
+            Expanded(
+              flex: 3,
+              child: ElevatedButton(
+                onPressed: () async {
+                  print(index);
+                  print(box.getAt(index));
+                  await action(fileName, "0").then((value) {
+                    setState(() {
+                      box.deleteAt(index);
+                      allData = box.values.toList() as List<String>;
+                      print(allData);
+                    });
+                  });
+                },
+                child: Icon(
+                  Icons.delete,
+                  color: Colors.white,
+                  size: 22.sp,
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+  Future action(String fileName, String status) async {
+    // Create Dio instance
+    Dio dio = Dio();
+
+    // Create FormData
+    FormData formData = FormData.fromMap({
+      'filename': fileName,
+      'staues': status,
+    });
+
+    print(formData);
+
+    try {
+      // Make the POST request
+      Response response = await dio.post(
+        'https://roayadesign.com/api_s/tqarer_a3meda_s3udia/button_api',
+        data: formData,
+      );
+
+      // Handle the response
+      if (response.statusCode == 200) {
+        // Successful response
+        Map<String, dynamic> responseData = response.data;
+        String status = responseData['status'];
+        String message = responseData['message'];
+        print('Status: $status');
+        print('Message: $message');
+      } else {
+        print('Request failed with status: ${response.statusCode}');
+      }
+    } catch (error) {
+      // Handle the error
+      print('Error: $error');
+    }
   }
 }

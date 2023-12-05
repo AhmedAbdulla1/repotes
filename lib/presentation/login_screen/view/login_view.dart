@@ -2,6 +2,7 @@ import 'package:reports/app/app_prefs.dart';
 import 'package:reports/app/di.dart';
 import 'package:reports/presentation/common/reusable/custom_button.dart';
 import 'package:reports/presentation/common/reusable/custom_text_form_field.dart';
+import 'package:reports/presentation/common/state_render/state_render.dart';
 import 'package:reports/presentation/common/state_render/state_renderer_imp.dart';
 import 'package:reports/presentation/login_screen/view_model/login_view_model.dart';
 import 'package:reports/presentation/resources/assets_manager.dart';
@@ -48,11 +49,11 @@ class _LoginViewState extends State<LoginView> {
       if (isLoading) {
         SchedulerBinding.instance.addPostFrameCallback((_) {
           _appPreferences.setPressKeyLoginScreen(true);
-          debugPrint(_appPreferences.getToken());
           Navigator.pushReplacementNamed(context, Routes.mainScreen);
         });
       }
     });
+    LoadingState(stateRenderType: StateRenderType.popupLoadingState,);
   }
 
   @override

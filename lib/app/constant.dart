@@ -1,7 +1,6 @@
 import 'package:reports/app/app_prefs.dart';
 import 'package:reports/app/di.dart';
 import 'package:reports/presentation/resources/assets_manager.dart';
-import 'package:flutter/cupertino.dart';
 
 final AppPreferences _appPreferences = instance<AppPreferences>();
 
@@ -10,6 +9,7 @@ class Constant {
   static const String empty = "";
   static const String columnModel = "ColumnModel";
   static const String mainBoxName = 'reportName';
+  static const String pdfName = 'pdfBox';
   static String token = _appPreferences.getToken();
   static const int zero = 0;
   static const Duration timeout = Duration(milliseconds: 60000); //this time by ms

@@ -2,21 +2,28 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hive/hive.dart';
+import 'package:reports/app/constant.dart';
 import 'package:reports/app/di.dart';
+import 'package:reports/domain/models/models.dart';
 import 'package:reports/presentation/common/reusable/custom_button.dart';
 import 'package:reports/presentation/common/reusable/custom_text_form_field.dart';
 import 'package:reports/presentation/common/state_render/state_renderer_imp.dart';
 import 'package:reports/presentation/edit_screen/view_model.dart';
 import 'package:reports/presentation/resources/assets_manager.dart';
 import 'package:reports/presentation/resources/color_manager.dart';
+import 'package:reports/presentation/resources/font_manager.dart';
 import 'package:reports/presentation/resources/string_manager.dart';
 import 'package:reports/presentation/resources/values_manager.dart';
 import 'package:image_picker/image_picker.dart';
-
-
+import 'package:reports/data/data_source/lacal_database.dart';
 
 class EditColumnView extends StatefulWidget {
-  const EditColumnView({Key? key}) : super(key: key);
+  EditColumnView({Key? key, required this.index, required this.addColumnModel})
+      : super(key: key);
+  final AddColumnModel addColumnModel;
+
+  final int index;
 
   @override
   State<EditColumnView> createState() => _EditColumnViewState();
@@ -26,22 +33,55 @@ class _EditColumnViewState extends State<EditColumnView> {
   final EditColumnViewModel _viewModel = EditColumnViewModel();
   final TextEditingController _columnNameController = TextEditingController();
   final ImagePicker _imagePicker = ImagePicker();
+  List<String> images = [
+    "",
+    "",
+    "",
+    "",
+  ];
+
+  void _bind() {
+    _viewModel.start();
+    _viewModel.setData(widget.addColumnModel);
+    _columnNameController.text = widget.addColumnModel.columnName;
+    _columnNameController.addListener(
+      () => _viewModel.setColumnName(
+        _columnNameController.text,
+      ),
+    );
+    images = widget.addColumnModel.images;
+  }
+
+  @override
+  void initState() {
+    _bind();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _viewModel.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:AppBar(
-        title:Text( "تعديل"),
+      appBar: AppBar(
+        title: const Text("تعديل"),
       ),
-      body: StreamBuilder<StateFlow>(
-        stream: _viewModel.outputState,
-        builder: (context, snapshot) =>
-            snapshot.data?.getScreenWidget(
-              context,
+      body: Directionality(
+        textDirection: TextDirection.rtl,
+        child: StreamBuilder<StateFlow>(
+          stream: _viewModel.outputState,
+          builder: (context, snapshot) =>
+              snapshot.data?.getScreenWidget(
+                context,
+                _getContent(),
+                () {},
+              ) ??
               _getContent(),
-              () {},
-            ) ??
-            _getContent(),
+        ),
       ),
     );
   }
@@ -62,18 +102,18 @@ class _EditColumnViewState extends State<EditColumnView> {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            StreamBuilder<File>(
+            StreamBuilder<String>(
               stream: _viewModel.beforeImageOutput,
               builder: (context, snapshot) =>
-                  _customItem(AppStrings.before, snapshot.data, 0),
+                  _customItem(AppStrings.before, snapshot.data ?? images[0], 0),
             ),
             SizedBox(
               width: AppSize.s20.w,
             ),
-            StreamBuilder<File>(
+            StreamBuilder<String>(
               stream: _viewModel.innerImage1Output,
               builder: (context, snapshot) =>
-                  _customItem(AppStrings.inner, snapshot.data, 1),
+                  _customItem(AppStrings.inner, snapshot.data ?? images[1], 1),
             ),
           ],
         ),
@@ -84,34 +124,48 @@ class _EditColumnViewState extends State<EditColumnView> {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            StreamBuilder<File>(
+            StreamBuilder<String>(
               stream: _viewModel.innerImage2Output,
               builder: (context, snapshot) =>
-                  _customItem(AppStrings.inner, snapshot.data, 2),
+                  _customItem(AppStrings.inner, snapshot.data ?? images[2], 2),
             ),
             SizedBox(
               width: AppSize.s20.w,
             ),
-            StreamBuilder<File>(
+            StreamBuilder<String>(
               stream: _viewModel.afterImageOutput,
-              builder: (context, snapshot) =>
-                  _customItem(AppStrings.after, snapshot.data, 3,),
+              builder: (context, snapshot) => _customItem(
+                AppStrings.after,
+                snapshot.data ?? images[3],
+                3,
+              ),
             ),
           ],
         ),
         SizedBox(
           height: AppSize.s30.h,
         ),
-        customElevatedButton(
-          stream: _viewModel.allRightOutput,
-          onPressed: () {},
-          text: AppStrings.save,
+        customElevatedButtonWithoutStream(
+          onPressed: () {
+            _viewModel.save(
+              widget.index,
+            );
+            Navigator.pop(context);
+          },
+          child: Text(
+            AppStrings.save,
+            style: TextStyle(
+                color: ColorManager.white,
+                fontFamily: FontConstants.enFontFamily,
+                fontSize: FontSize.s24,
+                fontWeight: FontWeight.bold),
+          ),
         ),
       ],
     );
   }
 
-  Widget _customItem(String title, File? image, int num) {
+  Widget _customItem(String title, String? image, int num) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -119,7 +173,7 @@ class _EditColumnViewState extends State<EditColumnView> {
           title,
           style: Theme.of(context).textTheme.headlineLarge,
         ),
-        image != null
+        image != null && image.isNotEmpty
             ? Container(
                 clipBehavior: Clip.antiAlias,
                 width: AppSize.s165.w,
@@ -158,6 +212,40 @@ class _EditColumnViewState extends State<EditColumnView> {
                       ),
                     ),
                   ),
+                  Positioned(
+                    bottom: 10.w,
+                    right: 50.w,
+                    child: Container(
+                      width: AppSize.s30.w,
+                      height: AppSize.s30.w,
+                      decoration: BoxDecoration(
+                        color: ColorManager.primary,
+                        borderRadius: BorderRadius.circular(AppSize.s30),
+                      ),
+                      child: IconButton(
+                        onPressed: () {
+                          switch (num) {
+                            case 0:
+                              _viewModel.beforeImageInput.add("");
+                            case 1:
+                              _viewModel.innerImage1Input.add((""));
+                            case 2:
+                              _viewModel.innerImage2Input.add("");
+                            case 3:
+                              _viewModel.afterImageInput.add("");
+                            default:
+                              return;
+                          }
+                          _viewModel.setImage(num, "");
+                        },
+                        icon: const Icon(
+                          Icons.delete,
+                          size: 15,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
                 ]))
             : InkWell(
                 onTap: () {
@@ -187,6 +275,7 @@ class _EditColumnViewState extends State<EditColumnView> {
       ],
     );
   }
+
   _showPicker(BuildContext context, int num) {
     showModalBottomSheet(
       shape: const RoundedRectangleBorder(
@@ -211,7 +300,7 @@ class _EditColumnViewState extends State<EditColumnView> {
                     style: TextStyle(color: ColorManager.primary),
                   ),
                   onTap: () {
-                    _imageFromGallery(num);
+                    _imageFromGallery(num, ImageSource.gallery);
                     Navigator.of(context).pop();
                   },
                 ),
@@ -226,7 +315,7 @@ class _EditColumnViewState extends State<EditColumnView> {
                     ),
                   ),
                   onTap: () {
-                    _imageFromCamera(num);
+                    _imageFromGallery(num, ImageSource.camera);
                     Navigator.of(context).pop();
                   },
                 )
@@ -238,50 +327,31 @@ class _EditColumnViewState extends State<EditColumnView> {
     );
   }
 
-  _imageFromGallery(int num) async {
-    var image = await _imagePicker.pickImage(source: ImageSource.gallery);
+  _imageFromGallery(int num, ImageSource imageSource) async {
+    var image = await _imagePicker.pickImage(source: imageSource);
     switch (num) {
       case 0:
-        _viewModel.beforeImageInput.add(File(image?.path ?? ""));
-        return;
+        print(num);
+        _viewModel.beforeImageInput.add((image?.path ?? ""));
       case 1:
-        _viewModel.innerImage1Input.add(File(image?.path ?? ""));
-        return;
+        _viewModel.innerImage1Input.add((image?.path ?? ""));
       case 2:
-        _viewModel.innerImage2Input.add(File(image?.path ?? ""));
-        return;
+        print(num);
+        _viewModel.innerImage2Input.add((image?.path ?? ""));
       case 3:
-        _viewModel.afterImageInput.add(File(image?.path ?? ""));
-        return;
+        print(num);
+        _viewModel.afterImageInput.add((image?.path ?? ""));
       default:
         return;
     }
+    _viewModel.setImage(num, image?.path ?? '');
+    return;
   }
 
-  _imageFromCamera(int num) async {
-    var image = await _imagePicker.pickImage(source: ImageSource.camera);
-    switch (num) {
-      case 0:
-        _viewModel.beforeImageInput.add(File(image?.path ?? ""));
-        return;
-      case 1:
-        _viewModel.innerImage1Input.add(File(image?.path ?? ""));
-        return;
-      case 2:
-        _viewModel.innerImage2Input.add(File(image?.path ?? ""));
-        return;
-      case 3:
-        _viewModel.afterImageInput.add(File(image?.path ?? ""));
-        return;
-      default:
-        return;
-    }
-  }
-
-  Widget _showImage(File? image) {
-    if (image != null && image.path.isNotEmpty) {
+  Widget _showImage(String? image) {
+    if (image != null && image.isNotEmpty) {
       return Image.file(
-        image,
+        File(image),
         fit: BoxFit.cover,
       );
     } else {

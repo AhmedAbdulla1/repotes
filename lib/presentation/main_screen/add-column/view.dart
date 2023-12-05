@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lottie/lottie.dart';
 import 'package:reports/app/di.dart';
 import 'package:reports/presentation/common/reusable/custom_button.dart';
 import 'package:reports/presentation/common/reusable/custom_text_form_field.dart';
@@ -43,20 +44,29 @@ class _AddColumnViewState extends State<AddColumnView> {
   }
 
   @override
+  void dispose() {
+    _viewModel.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // BuildContext n= context ;
     return StreamBuilder<StateFlow>(
       stream: _viewModel.outputState,
       builder: (context, snapshot) =>
           snapshot.data?.getScreenWidget(
             context,
-            _getContent(),
-            () {},
+            _getContent(context),
+            () {
+              _viewModel.start();
+            },
           ) ??
-          _getContent(),
+          _getContent(context),
     );
   }
 
-  Widget _getContent() {
+  Widget _getContent(BuildContext context) {
     return ListView(
       padding: EdgeInsets.all(AppPadding.p16.w),
       children: [
@@ -67,8 +77,11 @@ class _AddColumnViewState extends State<AddColumnView> {
         ),
         SizedBox(height: AppSize.s16.h),
         customElevatedButtonWithoutStream(
-          onPressed: () {
-            _viewModel.getLocation();
+          onPressed: ()async {
+            // loading(context);
+            await _viewModel.getLocation().then((value) {
+              // dismissDialog(context);
+            });
           },
           height: AppSize.s65,
           child: Text(
@@ -88,7 +101,7 @@ class _AddColumnViewState extends State<AddColumnView> {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            StreamBuilder<File?>(
+            StreamBuilder<String?>(
               stream: _viewModel.beforeImageOutput,
               builder: (context, snapshot) =>
                   _customItem(AppStrings.before, snapshot.data, 0),
@@ -96,7 +109,7 @@ class _AddColumnViewState extends State<AddColumnView> {
             SizedBox(
               width: AppSize.s20.w,
             ),
-            StreamBuilder<File?>(
+            StreamBuilder<String?>(
               stream: _viewModel.innerImage1Output,
               builder: (context, snapshot) =>
                   _customItem(AppStrings.inner, snapshot.data, 1),
@@ -110,7 +123,7 @@ class _AddColumnViewState extends State<AddColumnView> {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            StreamBuilder<File?>(
+            StreamBuilder<String?>(
               stream: _viewModel.innerImage2Output,
               builder: (context, snapshot) =>
                   _customItem(AppStrings.inner, snapshot.data, 2),
@@ -118,7 +131,7 @@ class _AddColumnViewState extends State<AddColumnView> {
             SizedBox(
               width: AppSize.s20.w,
             ),
-            StreamBuilder<File?>(
+            StreamBuilder<String?>(
               stream: _viewModel.afterImageOutput,
               builder: (context, snapshot) =>
                   _customItem(AppStrings.after, snapshot.data, 3),
@@ -132,7 +145,8 @@ class _AddColumnViewState extends State<AddColumnView> {
           stream: _viewModel.allRightOutput,
           onPressed: () async {
             await _viewModel.addToDatBase();
-            _columnNameController.text='';
+            _columnNameController.text = '';
+            setState(() {});
           },
           text: AppStrings.end,
         ),
@@ -140,7 +154,7 @@ class _AddColumnViewState extends State<AddColumnView> {
     );
   }
 
-  Widget _customItem(String title, File? image, int num) {
+  Widget _customItem(String title, String? image, int num) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -148,7 +162,7 @@ class _AddColumnViewState extends State<AddColumnView> {
           title,
           style: Theme.of(context).textTheme.headlineLarge,
         ),
-        image != null
+        image != null && image.isNotEmpty
             ? Container(
                 clipBehavior: Clip.antiAlias,
                 width: AppSize.s165.w,
@@ -187,7 +201,41 @@ class _AddColumnViewState extends State<AddColumnView> {
                       ),
                     ),
                   ),
-                ]))
+                  Positioned(
+                    bottom: 10.w,
+                    right: 50.w,
+                    child: Container(
+                      width: AppSize.s30.w,
+                      height: AppSize.s30.w,
+                      decoration: BoxDecoration(
+                        color: ColorManager.primary,
+                        borderRadius: BorderRadius.circular(AppSize.s30),
+                      ),
+                      child: IconButton(
+                        onPressed: () {
+                          switch (num) {
+                            case 0:
+                              _viewModel.beforeImageInput.add("");
+                            case 1:
+                              _viewModel.innerImage1Input.add((""));
+                            case 2:
+                              _viewModel.innerImage2Input.add("");
+                            case 3:
+                              _viewModel.afterImageInput.add("");
+                            default:
+                              return;
+                          }
+                          _viewModel.setImage(num, "");
+                        },
+                        icon: const Icon(
+                          Icons.delete,
+                          size: 15,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ]),)
             : InkWell(
                 onTap: () {
                   _showPicker(context, num);
@@ -269,28 +317,27 @@ class _AddColumnViewState extends State<AddColumnView> {
   }
 
   _imageFromGallery(int num, ImageSource imageSource) async {
-
     var image = await _imagePicker.pickImage(source: imageSource);
     switch (num) {
       case 0:
-        _viewModel.beforeImageInput.add(File(image?.path ?? ""));
+        _viewModel.beforeImageInput.add(image?.path ?? "");
       case 1:
-        _viewModel.innerImage1Input.add(File(image?.path ?? ""));
+        _viewModel.innerImage1Input.add((image?.path ?? ""));
       case 2:
-        _viewModel.innerImage2Input.add(File(image?.path ?? ""));
+        _viewModel.innerImage2Input.add((image?.path ?? ""));
       case 3:
-        _viewModel.afterImageInput.add(File(image?.path ?? ""));
+        _viewModel.afterImageInput.add((image?.path ?? ""));
       default:
         return;
     }
-      _viewModel.setImage(num, image);
+    _viewModel.setImage(num, image?.path??"");
     return;
   }
 
-  Widget _showImage(File? image) {
-    if (image != null && image.path.isNotEmpty) {
+  Widget _showImage(String? image) {
+    if (image != null && image.isNotEmpty) {
       return Image.file(
-        image,
+        File(image),
         fit: BoxFit.cover,
       );
     } else {
@@ -300,4 +347,45 @@ class _AddColumnViewState extends State<AddColumnView> {
       );
     }
   }
+  loading(BuildContext context){
+    showDialog(context: context,
+        // barrierDismissible: false,
+        builder: (context){
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSize.s14),
+        ),
+        elevation: AppSize.s1_5,
+        backgroundColor: Colors.transparent,
+        child: Container(
+          height: 250.h,
+          width: 250.h,
+          decoration: BoxDecoration(
+              color: ColorManager.white,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(AppSize.s14),
+              boxShadow: [
+                BoxShadow(
+                  color: ColorManager.grey,
+                ),
+              ]),
+          child: SizedBox(
+              height: AppSize.s65,
+              width: AppSize.s65,
+              child: Lottie.asset(JsonAssets.loading),
+          ),
+        ),
+      );
+    });
+  }
+  dismissDialog(BuildContext context) {
+    print("dismiss");
+    if (_isCurrentDialogShowing(context)) {
+      Navigator.of(context, rootNavigator: true).pop(true);
+    }
+  }
+  _isCurrentDialogShowing(BuildContext context) =>
+      ModalRoute.of(context)?.isCurrent != true;
+
+
 }

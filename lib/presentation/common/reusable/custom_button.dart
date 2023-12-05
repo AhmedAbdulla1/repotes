@@ -39,7 +39,7 @@ Widget customElevatedButtonWithoutStream({
       height: height,
       width: double.infinity,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppPadding.p12,vertical: AppPadding.p8),
+        padding: const EdgeInsets.symmetric(horizontal: 4,vertical: AppPadding.p8),
         child: ElevatedButton(
           onPressed: onPressed,
           child: child,

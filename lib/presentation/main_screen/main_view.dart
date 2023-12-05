@@ -26,7 +26,8 @@ class _MainViewState extends State<MainView> {
   final MainViewModel _viewModel = MainViewModel();
 
   final AppPreferences appPreferences = instance<AppPreferences>();
-  final FinishedColumnViewModel _finishedColumnViewModel =instance<FinishedColumnViewModel>();
+  final FinishedColumnViewModel _finishedColumnViewModel =
+      instance<FinishedColumnViewModel>();
   final PersistentTabController _controller = PersistentTabController();
 
   List<String> appBarTitle = [
@@ -126,12 +127,13 @@ class _MainViewState extends State<MainView> {
           backgroundColor: Colors.white,
           navBarHeight: AppSize.s65,
           // Customize as needed
+
           handleAndroidBackButtonPress: true,
           resizeToAvoidBottomInset: true,
           stateManagement: true,
           hideNavigationBarWhenKeyboardShows: true,
-          onItemSelected: (index){
-            if(index==1) {
+          onItemSelected: (index) {
+            if (index == 1) {
               print('ahmed');
               _finishedColumnViewModel.getData();
             }
@@ -142,5 +144,3 @@ class _MainViewState extends State<MainView> {
     );
   }
 }
-
-

@@ -1,5 +1,3 @@
-import 'package:reports/app/app_prefs.dart';
-import 'package:reports/app/di.dart';
 import 'package:reports/data/network/requests.dart';
 import 'package:reports/data/response/responses.dart';
 

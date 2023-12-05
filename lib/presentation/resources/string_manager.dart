@@ -1,4 +1,9 @@
+import 'package:hive/hive.dart';
+import 'package:reports/app/constant.dart';
+
 class AppStrings {
+
+
   static const String splashTitle = "تقارير";
   static const String noRouteFound = "No Route Found";
   static const String columnName = 'اسم العمود';

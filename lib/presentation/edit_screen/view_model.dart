@@ -1,26 +1,78 @@
 import 'dart:io';
 import 'dart:async';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:reports/app/constant.dart';
+import 'package:reports/data/data_source/lacal_database.dart';
 import 'package:reports/presentation/base/base_view_model.dart';
+import 'package:reports/presentation/common/freezed/freezed.dart';
 import 'package:reports/presentation/common/state_render/state_renderer_imp.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:reports/presentation/resources/string_manager.dart';
 
 class EditColumnViewModel extends EditColumnViewModelInput {
   final StreamController<String> _columnStreamController =
       StreamController<String>.broadcast();
-  final StreamController<bool> _allRightStreamController =
-      StreamController<bool>.broadcast();
-  final StreamController<File> _afterImageStreamController =
-      StreamController<File>.broadcast();
-  final StreamController<File> _innerImage1StreamController =
-      StreamController<File>.broadcast();
-  final StreamController<File> _innerImage2StreamController =
-      StreamController<File>.broadcast();
-  final StreamController<File> _beforeImageStreamController =
-      StreamController<File>.broadcast();
+  final StreamController<String> _afterImageStreamController =
+      StreamController<String>.broadcast();
+  final StreamController<String> _innerImage1StreamController =
+      StreamController<String>.broadcast();
+  final StreamController<String> _innerImage2StreamController =
+      StreamController<String>.broadcast();
+  final StreamController<String> _beforeImageStreamController =
+      StreamController<String>.broadcast();
+  final StreamController<List<AddColumnModel>> _dataController =
+      StreamController<List<AddColumnModel>>();
 
+  Box box = Hive.box<AddColumnModel>(Constant.mainBoxName);
+  AddColumnObject addColumnObject = AddColumnObject("", "", "", []);
+  List<String> images = [
+    "",
+    "",
+    "",
+    "",
+  ];
   @override
   void start() {
     inputState.add(ContentState());
+
+    // List<AddColumnModel> list = box.values.toList() as List<AddColumnModel>;
+    // _dataController.add(list);
+  }
+  setImage(int index,String image) {
+    print(index);
+    print(image);
+    print(list);
+    list[index] = image ?? "";
+    addColumnObject = addColumnObject.copyWith(image: list);
+    print(addColumnObject.image);
+    print(list);
+  }
+  List<String> list=[];
+  setData(AddColumnModel addColumnModel) {
+    print("Start");
+    list= List.from(addColumnModel.images);
+    addColumnObject = addColumnObject.copyWith(
+        columnName: addColumnModel.columnName,
+        latitude: addColumnModel.latitude,
+        longitude: addColumnModel.longitude,
+        image: list,
+    );
+
+    print('ahmed');
+    print(addColumnObject.image);
+  }
+
+  save(int index) {
+    print(index);
+    print(addColumnObject.image);
+    print(addColumnObject.columnName);
+    box.putAt(
+        index,
+        AddColumnModel(
+          columnName: addColumnObject.columnName,
+          images: addColumnObject.image,
+          latitude: addColumnObject.latitude,
+          longitude: addColumnObject.longitude,
+        ));
   }
 
   @override
@@ -31,17 +83,8 @@ class EditColumnViewModel extends EditColumnViewModelInput {
 
   @override
   setColumnName(String name) {
-    // TODO: implement setColumnName
-    throw UnimplementedError();
+    addColumnObject = addColumnObject.copyWith(columnName: name);
   }
-
-  @override
-  // TODO: implement allRightInput
-  Sink get allRightInput => _allRightStreamController.sink;
-
-  @override
-  // TODO: implement allRightOutput
-  Stream<bool> get allRightOutput => _allRightStreamController.stream;
 
   @override
   // TODO: implement afterImageInput
@@ -49,7 +92,7 @@ class EditColumnViewModel extends EditColumnViewModelInput {
 
   @override
   // TODO: implement afterImageOutput
-  Stream<File> get afterImageOutput => _afterImageStreamController.stream;
+  Stream<String> get afterImageOutput => _afterImageStreamController.stream;
 
   @override
   // TODO: implement beforeImageInput
@@ -57,23 +100,23 @@ class EditColumnViewModel extends EditColumnViewModelInput {
 
   @override
   // TODO: implement beforeImageOutput
-  Stream<File> get beforeImageOutput => _beforeImageStreamController.stream;
+  Stream<String> get beforeImageOutput => _beforeImageStreamController.stream;
 
   @override
   // TODO: implement innerImage1Input
-  Sink<File> get innerImage1Input => throw _innerImage1StreamController.sink;
+  Sink<String> get innerImage1Input => _innerImage1StreamController.sink;
 
   @override
   // TODO: implement innerImage1Output
-  Stream<File> get innerImage1Output => _innerImage1StreamController.stream;
+  Stream<String> get innerImage1Output => _innerImage1StreamController.stream;
 
   @override
   // TODO: implement innerImage1Input
-  Sink<File> get innerImage2Input => throw _innerImage1StreamController.sink;
+  Sink<String> get innerImage2Input => _innerImage2StreamController.sink;
 
   @override
   // TODO: implement innerImage2Output
-  Stream<File> get innerImage2Output => _innerImage2StreamController.stream;
+  Stream<String> get innerImage2Output => _innerImage2StreamController.stream;
 }
 
 abstract class EditColumnViewModelInput extends EditColumnViewModelOutput {
@@ -81,13 +124,11 @@ abstract class EditColumnViewModelInput extends EditColumnViewModelOutput {
 
   Sink get columnNameInput;
 
-  Sink get allRightInput;
-
   Sink get afterImageInput;
 
-  Sink<File> get innerImage1Input;
+  Sink<String> get innerImage1Input;
 
-  Sink<File> get innerImage2Input;
+  Sink<String> get innerImage2Input;
 
   Sink get beforeImageInput;
 }
@@ -95,13 +136,11 @@ abstract class EditColumnViewModelInput extends EditColumnViewModelOutput {
 abstract class EditColumnViewModelOutput extends BaseViewModel {
   Stream<String> get columnNameOutput;
 
-  Stream<bool> get allRightOutput;
+  Stream<String> get afterImageOutput;
 
-  Stream<File> get afterImageOutput;
+  Stream<String> get innerImage1Output;
 
-  Stream<File> get innerImage1Output;
+  Stream<String> get innerImage2Output;
 
-  Stream<File> get innerImage2Output;
-
-  Stream<File> get beforeImageOutput;
+  Stream<String> get beforeImageOutput;
 }
