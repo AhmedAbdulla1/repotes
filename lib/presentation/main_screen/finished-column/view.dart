@@ -1,25 +1,21 @@
 import 'dart:async';
 import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:pdf/pdf.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:reports/app/constant.dart';
 import 'package:reports/data/data_source/lacal_database.dart';
 import 'package:reports/presentation/common/reusable/custom_button.dart';
-import 'package:reports/presentation/common/state_render/state_renderer_imp.dart';
+import 'package:reports/presentation/common/reusable/custom_text_form_field.dart';
 import 'package:reports/presentation/edit_screen/view.dart';
 import 'package:reports/presentation/main_screen/finished-column/view_model.dart';
 import 'package:reports/presentation/resources/color_manager.dart';
 import 'package:reports/presentation/resources/font_manager.dart';
 import 'package:reports/presentation/resources/string_manager.dart';
 import 'package:reports/presentation/resources/values_manager.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:reports/presentation/show_pdf/view.dart';
 
@@ -32,13 +28,21 @@ class FinishedColumnView extends StatefulWidget {
 
 class _FinishedColumnViewState extends State<FinishedColumnView> {
   final FinishedColumnViewModel _viewModel = FinishedColumnViewModel();
+  final TextEditingController _searchEditingController =
+      TextEditingController();
   Box box = Hive.box<AddColumnModel>(Constant.mainBoxName);
   Box pdfBox = Hive.box<String>(Constant.pdfName);
-  late List<AddColumnModel> allData;
+
+  bind() {
+    _viewModel.start();
+    _searchEditingController.addListener(() {
+      _viewModel.setSearch(_searchEditingController.text);
+    });
+  }
 
   @override
   void initState() {
-    allData = box.values.toList() as List<AddColumnModel>;
+    bind();
     super.initState();
   }
 
@@ -50,64 +54,73 @@ class _FinishedColumnViewState extends State<FinishedColumnView> {
 
   @override
   void didChangeDependencies() {
-    allData = box.values.toList() as List<AddColumnModel>;
-    setState(() {});
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _getContent(),
-    );
+    return _getContent();
   }
 
   Widget _getContent() {
-    print(allData);
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: customElevatedButtonWithoutStream(
-            height: AppSize.s65,
-              onPressed: () {
-                setState(() {
-                  allData = box.values.toList() as List<AddColumnModel>;
-                });
-              },
-              child:  Text("تحديث",style: TextStyle(
-                color: Colors.white,
-                fontSize: FontSize.s24,
-                fontWeight: FontWeight.bold
-              ),),),
-        ),
-        Expanded(
-          child: allData.isNotEmpty
-              ? ListView.separated(
-                  separatorBuilder: (context, index) => SizedBox(
-                    height: 20.h,
-                  ),
-                  itemCount: allData.length,
-                  padding: EdgeInsets.all(
-                    AppPadding.p16.w,
-                  ),
-                  itemBuilder: (context, index) =>
-                      _customItem(context, index, allData[index]),
-                )
-              : Center(
+    return StreamBuilder<List<AddColumnModel>>(
+        stream: _viewModel.dataOutput,
+        builder: (context, snapshot) {
+          print(snapshot.data);
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AppPadding.p8, vertical: AppPadding.p8),
+                child: customTextFormField(
+                  stream: _viewModel.searchOutput,
+                  textEditingController: _searchEditingController,
+                  hintText: AppStrings.search,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppPadding.p8),
+                child: customElevatedButtonWithoutStream(
+                  onPressed: () {
+                    _viewModel.getData();
+                  },
                   child: Text(
-                    'لاتوجد بيانات ',
-                    style: Theme.of(context).textTheme.labelLarge,
+                    "تحديث",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: FontSize.s18,
+                        fontWeight: FontWeight.normal),
                   ),
                 ),
-        ),
-
-      ],
-    );
+              ),
+              Expanded(
+                child: snapshot.data != null && snapshot.data!.isNotEmpty
+                    ? ListView.separated(
+                        separatorBuilder: (context, index) => SizedBox(
+                          height: 20.h,
+                        ),
+                        itemCount: snapshot.data!.length,
+                        padding: EdgeInsets.all(
+                          AppPadding.p16.w,
+                        ),
+                        itemBuilder: (context, index) =>
+                            _customItem(context, index, snapshot.data![index]),
+                      )
+                    : Center(
+                        child: Text(
+                          'لاتوجد بيانات ',
+                          style: Theme.of(context).textTheme.labelLarge,
+                        ),
+                      ),
+              ),
+            ],
+          );
+        });
   }
 
   Widget _customItem(BuildContext context, int i, AddColumnModel data) {
-    List<String> nonEmptyStrings = data.images.where((element) => element.isNotEmpty).toList();
+    List<ImageDataHive> nonEmptyStrings =
+        data.images.where((element) => element.path.isNotEmpty).toList();
     return Container(
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
@@ -156,14 +169,13 @@ class _FinishedColumnViewState extends State<FinishedColumnView> {
                 Expanded(
                     child: customElevatedButtonWithoutStream(
                   onPressed: () {
-                    setState(() {
-                      box.deleteAt(i);
-                      allData = box.values.toList() as List<AddColumnModel>;
-                    });
+                    box.deleteAt(i);
+                    _viewModel.getData();
                   },
-                  child: const Text(AppStrings.delete,style: TextStyle(
-                    color: Colors.white,
-                  )),
+                  child: const Text(AppStrings.delete,
+                      style: TextStyle(
+                        color: Colors.white,
+                      )),
                 )),
                 Expanded(
                     child: customElevatedButtonWithoutStream(
@@ -176,37 +188,38 @@ class _FinishedColumnViewState extends State<FinishedColumnView> {
                         addColumnModel: data,
                       ),
                     ).then((value) {
-                      setState(() {
-                        allData = box.values.toList() as List<AddColumnModel>;
-                      });
+                      _viewModel.getData();
                     });
                   },
-                  child: const Text(AppStrings.edit,style: TextStyle(
-                    color: Colors.white,
-                  ),),
+                  child: const Text(
+                    AppStrings.edit,
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
                 )),
                 Expanded(
                   child: customElevatedButtonWithoutStream(
                     onPressed: () async {
                       String pdf = await _generatePdf(data, nonEmptyStrings);
+
                       PersistentNavBarNavigator.pushNewScreen(
                         context,
                         withNavBar: false,
                         screen: ShowPDFView(
                           index: i,
                           filepath: pdf,
-                          // addColumnModel: data[i],
                         ),
                       ).then((value) {
-                        pdfBox.add(pdf);
-                        setState(() {
-                          allData = box.values.toList() as List<AddColumnModel>;
-                        });
+                        _viewModel.getData();
                       });
                     },
-                    child:  Text(AppStrings.end,style: TextStyle(
-                      color: Colors.white,
-                    ),),
+                    child: const Text(
+                      AppStrings.end,
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -217,7 +230,7 @@ class _FinishedColumnViewState extends State<FinishedColumnView> {
     );
   }
 
-  Widget _customContainer(String image) {
+  Widget _customContainer(ImageDataHive image) {
     return Builder(builder: (context) {
       return Container(
         width: MediaQuery.sizeOf(context).width * 0.19,
@@ -236,80 +249,162 @@ class _FinishedColumnViewState extends State<FinishedColumnView> {
               )
             ]),
         child: Image.file(
-          File(image),
+          File(image.path),
           fit: BoxFit.cover,
         ),
       );
     });
   }
 
+  pw.Widget customText(String text, double fontSize, ByteData byteData) {
+    return pw.Expanded(
+      child: pw.Padding(
+        child: pw.Text(
+          text,
+          textAlign: pw.TextAlign.center,
+          style: pw.TextStyle(
+            fontSize: fontSize,
+            font: pw.Font.ttf(byteData),
+          ),
+        ),
+        padding: pw.EdgeInsets.all(2.h),
+      ),
+    );
+  }
+
+  pw.Widget customItem({
+    required pw.MemoryImage imagePath,
+    required String date,
+    required String location,
+    required ByteData byteData,
+  }) {
+    return pw.Padding(
+      padding: pw.EdgeInsets.all(3.h),
+      child: pw.Column(
+        children: [
+          pw.SizedBox(
+            height: 230.h,
+            width: MediaQuery.sizeOf(context).width * 0.5,
+            child: pw.Image(
+              imagePath,
+              fit: pw.BoxFit.fitWidth,
+            ),
+          ),
+          pw.Padding(
+            child: pw.Text(
+              date,
+              textAlign: pw.TextAlign.center,
+              style: pw.TextStyle(
+                fontSize: 10,
+                font: pw.Font.ttf(byteData),
+              ),
+            ),
+            padding: pw.EdgeInsets.zero,
+          ),
+          pw.Padding(
+            child: pw.Text(
+              location,
+              textAlign: pw.TextAlign.center,
+              style: pw.TextStyle(
+                fontSize: 10,
+                font: pw.Font.ttf(byteData),
+              ),
+            ),
+            padding: pw.EdgeInsets.only(bottom: 1.h),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<String> _generatePdf(
-      AddColumnModel addColumnModel, List<String> listImages) async {
-    print("Start genrate pdf ");
+      AddColumnModel addColumnModel, List<ImageDataHive> listImages) async {
     final pdf = pw.Document();
-    List images = [];
+    List<pw.MemoryImage> images = [];
     for (var i in listImages) {
-      File imageFile = File(i);
+      File imageFile = File(i.path);
       final bytes = await imageFile.readAsBytes();
       final image = pw.MemoryImage(bytes);
       images.add(image);
     }
-    ByteData byteData = await rootBundle.load('assets/fonts/Cairo-Light.ttf');
+    ByteData byteData = await rootBundle.load('assets/fonts/Cairo-Regular.ttf');
     pdf.addPage(
       pw.Page(
         build: (pw.Context context) {
           return pw.Directionality(
             textDirection: pw.TextDirection.rtl,
             child: pw.Column(
-              mainAxisAlignment: pw.MainAxisAlignment.center,
+              mainAxisAlignment: pw.MainAxisAlignment.end,
               children: [
-                pw.Text(
-                  ' اسم العمود: ${addColumnModel.columnName}',
-                  style: pw.TextStyle(
-                    fontSize: 40,
-                    fontWeight: pw.FontWeight.bold,
-                    font: pw.Font.ttf(byteData),
-                  ),
+                pw.Table(
+                  border: pw.TableBorder.all(),
+                  children: [
+                    pw.TableRow(
+                      children: [
+                        customText('الاحداثيات', 12, byteData),
+                        customText('رقم العمود', 12, byteData),
+                      ],
+                    ),
+                    pw.TableRow(
+                      children: [
+                        customText(
+                          '${addColumnModel.latitude} , ${addColumnModel.longitude}',
+                          12,
+                          byteData,
+                        ),
+                        customText(addColumnModel.columnName, 12, byteData),
+                      ],
+                    ),
+                  ],
                 ),
-                pw.SizedBox(height: 30),
-                pw.Text(
-                  "الاحداثيات: ${addColumnModel.latitude} , ${addColumnModel.longitude}",
-                  style: pw.TextStyle(
-                    fontSize: 30,
-                    fontWeight: pw.FontWeight.bold,
-                    font: pw.Font.ttf(byteData),
-                  ),
-                ),
-                pw.SizedBox(height: 20),
-                pw.SizedBox(
-                  height: 200.h,
-                  child: pw.Row(
+                pw.SizedBox(height: 10.h),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.symmetric(horizontal: AppPadding.p65),
+                  child: pw.Table(
+                    border: pw.TableBorder.all(),
                     children: [
-                      pw.Expanded(
-                        child: pw.Image(images[0], fit: pw.BoxFit.fill),
+                      pw.TableRow(
+                        verticalAlignment: pw.TableCellVerticalAlignment.middle,
+                        children: [
+                          customItem(
+                            imagePath: images[1],
+                            date: addColumnModel.images[1].date,
+                            location:
+                                "${addColumnModel.images[1].late} , ${addColumnModel.images[1].long}",
+                            byteData: byteData,
+                          ),
+                          customItem(
+                            imagePath: images[0],
+                            date: addColumnModel.images[0].date,
+                            location:
+                                "${addColumnModel.images[0].late} , ${addColumnModel.images[0].long}",
+                            byteData: byteData,
+                          ),
+                        ],
                       ),
-                      pw.SizedBox(width: 20),
-                      pw.Expanded(
-                        child: pw.Image(images[1], fit: pw.BoxFit.fill),
+                      pw.TableRow(
+                        verticalAlignment: pw.TableCellVerticalAlignment.middle,
+                        children: [
+                          customItem(
+                            imagePath: images[3],
+                            date: addColumnModel.images[3].date,
+                            location:
+                                "${addColumnModel.images[3].late} , ${addColumnModel.images[3].long}",
+                            byteData: byteData,
+                          ),
+                          customItem(
+                            imagePath: images[2],
+                            date: addColumnModel.images[2].date,
+                            location:
+                                "${addColumnModel.images[2].late} , ${addColumnModel.images[2].long}",
+                            byteData: byteData,
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
-                pw.SizedBox(height: 20),
-                pw.SizedBox(
-                  height: 200.h,
-                  child: pw.Row(
-                    children: [
-                      pw.Expanded(
-                        child: pw.Image(images[2], fit: pw.BoxFit.fill),
-                      ),
-                      pw.SizedBox(width: 20),
-                      pw.Expanded(
-                        child: pw.Image(images[3], fit: pw.BoxFit.fill),
-                      ),
-                    ],
-                  ),
-                ),
+                pw.SizedBox(height: 10.h),
               ],
             ),
           );
@@ -318,10 +413,7 @@ class _FinishedColumnViewState extends State<FinishedColumnView> {
     );
     File file = File(
         "/data/user/0/com.example.reports/cache/${addColumnModel.columnName}.pdf");
-
     await file.writeAsBytes(await pdf.save());
-
-    print(file.path);
     print("end generate pdf ");
     return file.path;
   }

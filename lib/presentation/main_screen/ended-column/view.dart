@@ -1,20 +1,15 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:reports/app/constant.dart';
-import 'package:reports/app/di.dart';
 
 import 'package:reports/presentation/common/reusable/custom_button.dart';
 import 'package:reports/presentation/common/state_render/state_renderer_imp.dart';
 import 'package:reports/presentation/main_screen/ended-column/view_model.dart';
 import 'package:reports/presentation/resources/color_manager.dart';
 import 'package:reports/presentation/resources/font_manager.dart';
-import 'package:reports/presentation/resources/string_manager.dart';
 import 'package:reports/presentation/resources/values_manager.dart';
 import 'package:reports/presentation/show_pdf/view.dart';
 
@@ -29,6 +24,7 @@ class _EndedColumnViewState extends State<EndedColumnView> {
   // final EndedColumnViewModel _viewModel = EndedColumnViewModel();
   final Box box = Hive.box<String>(Constant.pdfName);
   late List<String> allData;
+  final EndedColumnViewModel _viewModel = EndedColumnViewModel();
 
   @override
   void initState() {
@@ -38,7 +34,15 @@ class _EndedColumnViewState extends State<EndedColumnView> {
 
   @override
   Widget build(BuildContext context) {
-    return _getContent();
+    return StreamBuilder<StateFlow>(
+      stream: _viewModel.outputState,
+      builder: (context, snapshot) =>
+          snapshot.data?.getScreenWidget(context, _getContent(), () {
+            _viewModel.inputState.add(ContentState());
+
+          }) ??
+          _getContent(),
+    );
   }
 
   Widget _getContent() {
@@ -54,11 +58,13 @@ class _EndedColumnViewState extends State<EndedColumnView> {
                 allData = box.values.toList() as List<String>;
               });
             },
-            child:  Text("تحديث",style: TextStyle(
-                color: Colors.white,
-                fontSize: FontSize.s24,
-                fontWeight: FontWeight.bold
-            ),),
+            child: Text(
+              "تحديث",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: FontSize.s24,
+                  fontWeight: FontWeight.bold),
+            ),
           ),
         ),
         Expanded(
@@ -137,9 +143,9 @@ class _EndedColumnViewState extends State<EndedColumnView> {
                 ),
               ),
             ),
-            SizedBox(width: AppSize.s8,),
-
-
+            const SizedBox(
+              width: AppSize.s8,
+            ),
             Expanded(
               flex: 3,
               child: ElevatedButton(
@@ -147,11 +153,13 @@ class _EndedColumnViewState extends State<EndedColumnView> {
                   print(index);
                   print(box.getAt(index));
 
-                  await action(fileName, "1").then((value) {
-                    setState(() {
-                      box.deleteAt(index);
-                      allData = box.values.toList() as List<String>;
-                    });
+                  await _viewModel.updateStatus(fileName, "1").then((value) {
+                    if (value) {
+                      setState(() {
+                        box.deleteAt(index);
+                        allData = box.values.toList() as List<String>;
+                      });
+                    }
                   });
                 },
                 child: const Icon(
@@ -160,19 +168,23 @@ class _EndedColumnViewState extends State<EndedColumnView> {
                 ),
               ),
             ),
-            SizedBox(width: AppSize.s8,),
+            const SizedBox(
+              width: AppSize.s8,
+            ),
             Expanded(
               flex: 3,
               child: ElevatedButton(
                 onPressed: () async {
                   print(index);
                   print(box.getAt(index));
-                  await action(fileName, "0").then((value) {
-                    setState(() {
+                  await _viewModel.updateStatus(fileName, "0").then((value) {
+                    if(value) {
+                      setState(() {
                       box.deleteAt(index);
                       allData = box.values.toList() as List<String>;
                       print(allData);
                     });
+                    }
                   });
                 },
                 child: Icon(

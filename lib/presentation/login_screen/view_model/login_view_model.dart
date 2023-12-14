@@ -84,6 +84,7 @@ class LoginViewModel extends LoginViewModelOutput {
       );
     }, (data) async {
       await _appPreferences.setToken(data);
+      await _appPreferences.setPassword(_loginObject.password);
       inputState.add(
         ContentState(),
       );

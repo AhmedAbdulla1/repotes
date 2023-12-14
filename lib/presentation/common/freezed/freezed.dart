@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-
+import 'package:reports/data/data_source/lacal_database.dart';
 part 'freezed.freezed.dart';
 
 @freezed
@@ -29,18 +29,18 @@ class AddColumnObject with _$AddColumnObject {
     String columnName,
     String latitude,
     String longitude,
-    List<String> image,
+    List<ImageDataHive> image,
   ) = _AddColumnObject;
 }
 
-@freezed
-class TrainingObject with _$TrainingObject {
-  factory TrainingObject(
-    String exercises,
-    String image,
-    int large,
-    int smale,
-    bool autoStart,
-    int idleTime,
-  ) = _TrainingObject;
-}
+// @freezed
+// class TrainingObject with _$TrainingObject {
+//   factory TrainingObject(
+//     String exercises,
+//     String image,
+//     int large,
+//     int smale,
+//     bool autoStart,
+//     int idleTime,
+//   ) = _TrainingObject;
+// }

@@ -14,7 +14,6 @@ import 'package:reports/presentation/resources/font_manager.dart';
 import 'package:reports/presentation/resources/string_manager.dart';
 import 'package:reports/presentation/resources/values_manager.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:geolocator/geolocator.dart';
 
 class AddColumnView extends StatefulWidget {
   const AddColumnView({Key? key}) : super(key: key);
@@ -27,7 +26,7 @@ class _AddColumnViewState extends State<AddColumnView> {
   final AddColumnViewModel _viewModel = instance<AddColumnViewModel>();
   final TextEditingController _columnNameController = TextEditingController();
   final ImagePicker _imagePicker = ImagePicker();
-
+  final _formKey = GlobalKey<FormState>();
   void _bind() {
     _viewModel.start();
     _columnNameController.addListener(
@@ -51,106 +50,107 @@ class _AddColumnViewState extends State<AddColumnView> {
 
   @override
   Widget build(BuildContext context) {
-    // BuildContext n= context ;
     return StreamBuilder<StateFlow>(
       stream: _viewModel.outputState,
-      builder: (context, snapshot) =>
-          snapshot.data?.getScreenWidget(
-            context,
-            _getContent(context),
-            () {
-              _viewModel.start();
-            },
-          ) ??
-          _getContent(context),
-    );
+      builder: (context, snapshot) {
+        print(snapshot.data?.getStateRenderType());
+           return   snapshot.data?.getScreenWidget(
+                    context,
+                    _getContent(),
+                    () {},
+                  ) ??
+                  _getContent();
+            });
   }
 
-  Widget _getContent(BuildContext context) {
-    return ListView(
-      padding: EdgeInsets.all(AppPadding.p16.w),
-      children: [
-        customTextFormField(
-          stream: _viewModel.columnNameOutput,
-          textEditingController: _columnNameController,
-          hintText: AppStrings.columnName,
-        ),
-        SizedBox(height: AppSize.s16.h),
-        customElevatedButtonWithoutStream(
-          onPressed: ()async {
-            // loading(context);
-            await _viewModel.getLocation().then((value) {
-              // dismissDialog(context);
-            });
-          },
-          height: AppSize.s65,
-          child: Text(
-            "الموقع",
-            style: TextStyle(
-              color: ColorManager.white,
-              fontFamily: FontConstants.enFontFamily,
-              fontSize: FontSize.s24,
-              fontWeight: FontWeight.bold,
+  Widget _getContent() {
+    return Form(
+      key: _formKey,
+      child: ListView(
+        padding: EdgeInsets.all(AppPadding.p16.w),
+        children: [
+          customTextFormField(
+            stream: _viewModel.columnNameOutput,
+            textEditingController: _columnNameController,
+            hintText: AppStrings.columnName,
+          ),
+          SizedBox(height: AppSize.s16.h),
+          customElevatedButtonWithoutStream(
+            onPressed: ()async {
+              // loading(context);
+              await _viewModel.getLocation().then((value) {
+                // dismissDialog(context);
+              });
+            },
+            height: AppSize.s65,
+            child: Text(
+              "الموقع",
+              style: TextStyle(
+                color: ColorManager.white,
+                fontFamily: FontConstants.enFontFamily,
+                fontSize: FontSize.s24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-        ),
-        SizedBox(
-          height: AppSize.s16.h,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            StreamBuilder<String?>(
-              stream: _viewModel.beforeImageOutput,
-              builder: (context, snapshot) =>
-                  _customItem(AppStrings.before, snapshot.data, 0),
-            ),
-            SizedBox(
-              width: AppSize.s20.w,
-            ),
-            StreamBuilder<String?>(
-              stream: _viewModel.innerImage1Output,
-              builder: (context, snapshot) =>
-                  _customItem(AppStrings.inner, snapshot.data, 1),
-            ),
-          ],
-        ),
-        SizedBox(
-          height: AppSize.s16.w,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            StreamBuilder<String?>(
-              stream: _viewModel.innerImage2Output,
-              builder: (context, snapshot) =>
-                  _customItem(AppStrings.inner, snapshot.data, 2),
-            ),
-            SizedBox(
-              width: AppSize.s20.w,
-            ),
-            StreamBuilder<String?>(
-              stream: _viewModel.afterImageOutput,
-              builder: (context, snapshot) =>
-                  _customItem(AppStrings.after, snapshot.data, 3),
-            ),
-          ],
-        ),
-        SizedBox(
-          height: AppSize.s16.w,
-        ),
-        customElevatedButton(
-          stream: _viewModel.allRightOutput,
-          onPressed: () async {
-            await _viewModel.addToDatBase();
-            _columnNameController.text = '';
-            setState(() {});
-          },
-          text: AppStrings.end,
-        ),
-      ],
+          SizedBox(
+            height: AppSize.s16.h,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              StreamBuilder<String?>(
+                stream: _viewModel.beforeImageOutput,
+                builder: (context, snapshot) =>
+                    _customItem(AppStrings.before, snapshot.data, 0),
+              ),
+              SizedBox(
+                width: AppSize.s20.w,
+              ),
+              StreamBuilder<String?>(
+                stream: _viewModel.innerImage1Output,
+                builder: (context, snapshot) =>
+                    _customItem(AppStrings.inner, snapshot.data, 1),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: AppSize.s16.w,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              StreamBuilder<String?>(
+                stream: _viewModel.innerImage2Output,
+                builder: (context, snapshot) =>
+                    _customItem(AppStrings.inner, snapshot.data, 2),
+              ),
+              SizedBox(
+                width: AppSize.s20.w,
+              ),
+              StreamBuilder<String?>(
+                stream: _viewModel.afterImageOutput,
+                builder: (context, snapshot) =>
+                    _customItem(AppStrings.after, snapshot.data, 3),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: AppSize.s16.w,
+          ),
+          customElevatedButton(
+            stream: _viewModel.allRightOutput,
+            onPressed: () async {
+              await _viewModel.addToDatBase();
+              _columnNameController.text = '';
+              setState(() {});
+            },
+            text: AppStrings.end,
+          ),
+        ],
+      ),
     );
   }
 

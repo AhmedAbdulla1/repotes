@@ -76,7 +76,7 @@ class StateRenderer extends StatelessWidget {
           _getAnimatedImage(JsonAssets.error),
           SizedBox(height: 10.h,),
           _getMessage(),
-          _getRetryButton(AppStrings.retry),
+          // _getRetryButton(AppStrings.retry),
         ]);
       case StateRenderType.fullScreenLoadingState:
         return _getItemColumn(
@@ -110,7 +110,8 @@ class StateRenderer extends StatelessWidget {
       elevation: AppSize.s1_5,
       backgroundColor: Colors.transparent,
       child: Container(
-        height: 250,
+        clipBehavior: Clip.hardEdge,
+        height: 250.h,
         decoration: BoxDecoration(
             color: ColorManager.white,
             shape: BoxShape.rectangle,
@@ -126,13 +127,17 @@ class StateRenderer extends StatelessWidget {
   }
 
   Widget _getItemColumn(List<Widget> children) {
-    return Padding(
-      padding: const EdgeInsets.all(AppPadding.p8),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: children,
+    return Container(
+      color: Colors.white,
+      height: double.infinity,
+      child: Padding(
+        padding: const EdgeInsets.all(AppPadding.p8),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: children,
+          ),
         ),
       ),
     );
@@ -151,6 +156,7 @@ class StateRenderer extends StatelessWidget {
       style: getMessageStyle(
         color: ColorManager.black,
         fontSize: FontSize.s16,
+
       ),
       textAlign: TextAlign.center,
     );
@@ -173,6 +179,9 @@ class StateRenderer extends StatelessWidget {
           },
           child: Text(
             title,
+            style:const  TextStyle(
+              color: Colors.white,
+            ),
           ),
         ),
       ),

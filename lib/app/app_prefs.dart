@@ -11,6 +11,7 @@ const String wifiKey = 'Wifi';
 const String exerciseKey = "ExerciseKey";
 const String trainingKey = "TrainingKey";
 const String token = "token";
+const String password = "password";
 
 class AppPreferences {
   final SharedPreferences _sharedPreferences;
@@ -45,43 +46,26 @@ class AppPreferences {
   //   }
   // }
 
-  // onBoarding
-  void setPressKeyOnBoardingScreen(){
-    _sharedPreferences.setBool(pressKeyOnBoardingScreen, true);
-  }
 
-  void setProfileImage(String image)  {
-    _sharedPreferences.setString(profileImageKey, image);
-  }
 
   Future<void> setWifiData(List<String> data ) async {
     _sharedPreferences.setStringList(profileImageKey, data);
   }
-  List<String>? getWifiData() {
-    return _sharedPreferences.getStringList(profileImageKey,);
-  }
-  Future<void> getProfileImage(String image) async {
-    _sharedPreferences.getString(profileImageKey);
-  }
 
-  Future<bool> isPressKeyOnBoardingScreen() async {
-    return _sharedPreferences.getBool(pressKeyOnBoardingScreen) ?? false;
-  }
 
-  Future<void> setTraining(List<String> trainingData) async {
-    _sharedPreferences.setStringList(trainingKey, trainingData);
-  }
 
-  List<String>? getTraining() {
-    return _sharedPreferences.getStringList(trainingKey);
-  }
+
+
+
+
+
 
   //login
   Future<void> setPressKeyLoginScreen(bool b) async {
     _sharedPreferences.setBool(pressKeyLoginScreen, b);
   }
 
-  Future<bool> isPressKeyLoginScreen() async {
+  bool isPressKeyLoginScreen() {
     return _sharedPreferences.getBool(pressKeyLoginScreen) ?? false;
   }
 
@@ -96,11 +80,18 @@ class AppPreferences {
 
   //token
   Future<void> setToken(String t) async {
-    _sharedPreferences.setString(token, t);
+   await _sharedPreferences.setString(token, t);
   }
 
   String getToken() {
     return _sharedPreferences.getString(token) ?? '';
+  }
+  Future<void> setPassword(String t) async {
+    await _sharedPreferences.setString(password, t);
+  }
+
+  String getPassword() {
+    return _sharedPreferences.getString(password) ?? '';
   }
 
   // logout

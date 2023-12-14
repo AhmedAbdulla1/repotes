@@ -1,12 +1,13 @@
-import 'dart:io';
 import 'dart:async';
+import 'package:geolocator/geolocator.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:reports/app/constant.dart';
 import 'package:reports/data/data_source/lacal_database.dart';
 import 'package:reports/presentation/base/base_view_model.dart';
 import 'package:reports/presentation/common/freezed/freezed.dart';
 import 'package:reports/presentation/common/state_render/state_renderer_imp.dart';
-import 'package:reports/presentation/resources/string_manager.dart';
+import 'package:reports/presentation/main_screen/add-column/view_model.dart';
 
 class EditColumnViewModel extends EditColumnViewModelInput {
   final StreamController<String> _columnStreamController =
@@ -19,17 +20,38 @@ class EditColumnViewModel extends EditColumnViewModelInput {
       StreamController<String>.broadcast();
   final StreamController<String> _beforeImageStreamController =
       StreamController<String>.broadcast();
-  final StreamController<List<AddColumnModel>> _dataController =
-      StreamController<List<AddColumnModel>>();
+  // final StreamController<List<AddColumnModel>> _dataController =
+  //     StreamController<List<AddColumnModel>>();
 
   Box box = Hive.box<AddColumnModel>(Constant.mainBoxName);
   AddColumnObject addColumnObject = AddColumnObject("", "", "", []);
-  List<String> images = [
-    "",
-    "",
-    "",
-    "",
+  List<ImageDataHive> images = [
+    ImageDataHive(
+      path: "",
+      date: "",
+      long: "",
+      late: "",
+    ),
+    ImageDataHive(
+      path: "",
+      date: "",
+      long: "",
+      late: "",
+    ),
+    ImageDataHive(
+      path: "",
+      date: "",
+      long: "",
+      late: "",
+    ),
+    ImageDataHive(
+      path: "",
+      date: "",
+      long: "",
+      late: "",
+    ),
   ];
+
   @override
   void start() {
     inputState.add(ContentState());
@@ -37,33 +59,49 @@ class EditColumnViewModel extends EditColumnViewModelInput {
     // List<AddColumnModel> list = box.values.toList() as List<AddColumnModel>;
     // _dataController.add(list);
   }
-  setImage(int index,String image) {
-    print(index);
-    print(image);
-    print(list);
-    list[index] = image ?? "";
-    addColumnObject = addColumnObject.copyWith(image: list);
+
+  Future<void> setImage(int index, String image) async {
+    try {
+      await checkLocationPermission();
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      DateTime now = DateTime.now();
+      String date = DateFormat('yyyy/MM/d HH:mm').format(now);
+      images[index] = ImageDataHive(
+        path: image,
+        date: date,
+        long: position.longitude.toString(),
+        late: position.latitude.toString(),
+      );
+      addColumnObject = addColumnObject.copyWith(image: images);
+      // _allRightStreamController.add(null);
+    } catch (e) {}
+
+    // _allRightStreamController.add(null);
     print(addColumnObject.image);
-    print(list);
   }
-  List<String> list=[];
+
+  List<ImageDataHive> list = [];
+
   setData(AddColumnModel addColumnModel) {
     print("Start");
-    list= List.from(addColumnModel.images);
+    list = List.from(addColumnModel.images);
+    images = list;
+    print(
+        "${list[0].path} ,${list[1].path} ,${list[2].path} ,${list[3].path} ");
     addColumnObject = addColumnObject.copyWith(
-        columnName: addColumnModel.columnName,
-        latitude: addColumnModel.latitude,
-        longitude: addColumnModel.longitude,
-        image: list,
+      columnName: addColumnModel.columnName,
+      latitude: addColumnModel.latitude,
+      longitude: addColumnModel.longitude,
+      image: list,
     );
-
-    print('ahmed');
-    print(addColumnObject.image);
   }
 
   save(int index) {
     print(index);
-    print(addColumnObject.image);
+    print(
+        "${addColumnObject.image[0].path},${addColumnObject.image[1].path}, ${addColumnObject.image[2].path},${addColumnObject.image[3].path}");
     print(addColumnObject.columnName);
     box.putAt(
         index,

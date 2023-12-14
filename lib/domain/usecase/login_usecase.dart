@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:reports/data/network/failure.dart';
 import 'package:reports/data/network/requests.dart';
-import 'package:reports/domain/models/models.dart';
 import 'package:reports/domain/repository/repository.dart';
 import 'package:reports/domain/usecase/base_usecase.dart';
 

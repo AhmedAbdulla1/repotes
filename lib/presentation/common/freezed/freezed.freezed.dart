@@ -1,7 +1,7 @@
-// coverage:ignore-String
+// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_String: type=lint
-// ignore_for_String: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
+// ignore_for_file: type=lint
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'freezed.dart';
 
@@ -392,7 +392,7 @@ mixin _$AddColumnObject {
   String get columnName => throw _privateConstructorUsedError;
   String get latitude => throw _privateConstructorUsedError;
   String get longitude => throw _privateConstructorUsedError;
-  List<String> get image => throw _privateConstructorUsedError;
+  List<ImageDataHive> get image => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $AddColumnObjectCopyWith<AddColumnObject> get copyWith =>
@@ -406,7 +406,10 @@ abstract class $AddColumnObjectCopyWith<$Res> {
       _$AddColumnObjectCopyWithImpl<$Res, AddColumnObject>;
   @useResult
   $Res call(
-      {String columnName, String latitude, String longitude, List<String> image});
+      {String columnName,
+      String latitude,
+      String longitude,
+      List<ImageDataHive> image});
 }
 
 /// @nodoc
@@ -443,7 +446,7 @@ class _$AddColumnObjectCopyWithImpl<$Res, $Val extends AddColumnObject>
       image: null == image
           ? _value.image
           : image // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+              as List<ImageDataHive>,
     ) as $Val);
   }
 }
@@ -457,7 +460,10 @@ abstract class _$$AddColumnObjectImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String columnName, String latitude, String longitude, List<String> image});
+      {String columnName,
+      String latitude,
+      String longitude,
+      List<ImageDataHive> image});
 }
 
 /// @nodoc
@@ -492,7 +498,7 @@ class __$$AddColumnObjectImplCopyWithImpl<$Res>
       null == image
           ? _value._image
           : image // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+              as List<ImageDataHive>,
     ));
   }
 }
@@ -500,8 +506,8 @@ class __$$AddColumnObjectImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$AddColumnObjectImpl implements _AddColumnObject {
-  _$AddColumnObjectImpl(
-      this.columnName, this.latitude, this.longitude, final List<String> image)
+  _$AddColumnObjectImpl(this.columnName, this.latitude, this.longitude,
+      final List<ImageDataHive> image)
       : _image = image;
 
   @override
@@ -510,9 +516,9 @@ class _$AddColumnObjectImpl implements _AddColumnObject {
   final String latitude;
   @override
   final String longitude;
-  final List<String> _image;
+  final List<ImageDataHive> _image;
   @override
-  List<String> get image {
+  List<ImageDataHive> get image {
     if (_image is EqualUnmodifiableListView) return _image;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_image);
@@ -550,8 +556,11 @@ class _$AddColumnObjectImpl implements _AddColumnObject {
 }
 
 abstract class _AddColumnObject implements AddColumnObject {
-  factory _AddColumnObject(final String columnName, final String latitude,
-      final String longitude, final List<String> image) = _$AddColumnObjectImpl;
+  factory _AddColumnObject(
+      final String columnName,
+      final String latitude,
+      final String longitude,
+      final List<ImageDataHive> image) = _$AddColumnObjectImpl;
 
   @override
   String get columnName;
@@ -560,230 +569,9 @@ abstract class _AddColumnObject implements AddColumnObject {
   @override
   String get longitude;
   @override
-  List<String> get image;
+  List<ImageDataHive> get image;
   @override
   @JsonKey(ignore: true)
   _$$AddColumnObjectImplCopyWith<_$AddColumnObjectImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-mixin _$TrainingObject {
-  String get exercises => throw _privateConstructorUsedError;
-  String get image => throw _privateConstructorUsedError;
-  int get large => throw _privateConstructorUsedError;
-  int get smale => throw _privateConstructorUsedError;
-  bool get autoStart => throw _privateConstructorUsedError;
-  int get idleTime => throw _privateConstructorUsedError;
-
-  @JsonKey(ignore: true)
-  $TrainingObjectCopyWith<TrainingObject> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $TrainingObjectCopyWith<$Res> {
-  factory $TrainingObjectCopyWith(
-          TrainingObject value, $Res Function(TrainingObject) then) =
-      _$TrainingObjectCopyWithImpl<$Res, TrainingObject>;
-  @useResult
-  $Res call(
-      {String exercises,
-      String image,
-      int large,
-      int smale,
-      bool autoStart,
-      int idleTime});
-}
-
-/// @nodoc
-class _$TrainingObjectCopyWithImpl<$Res, $Val extends TrainingObject>
-    implements $TrainingObjectCopyWith<$Res> {
-  _$TrainingObjectCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? exercises = null,
-    Object? image = null,
-    Object? large = null,
-    Object? smale = null,
-    Object? autoStart = null,
-    Object? idleTime = null,
-  }) {
-    return _then(_value.copyWith(
-      exercises: null == exercises
-          ? _value.exercises
-          : exercises // ignore: cast_nullable_to_non_nullable
-              as String,
-      image: null == image
-          ? _value.image
-          : image // ignore: cast_nullable_to_non_nullable
-              as String,
-      large: null == large
-          ? _value.large
-          : large // ignore: cast_nullable_to_non_nullable
-              as int,
-      smale: null == smale
-          ? _value.smale
-          : smale // ignore: cast_nullable_to_non_nullable
-              as int,
-      autoStart: null == autoStart
-          ? _value.autoStart
-          : autoStart // ignore: cast_nullable_to_non_nullable
-              as bool,
-      idleTime: null == idleTime
-          ? _value.idleTime
-          : idleTime // ignore: cast_nullable_to_non_nullable
-              as int,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$TrainingObjectImplCopyWith<$Res>
-    implements $TrainingObjectCopyWith<$Res> {
-  factory _$$TrainingObjectImplCopyWith(_$TrainingObjectImpl value,
-          $Res Function(_$TrainingObjectImpl) then) =
-      __$$TrainingObjectImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {String exercises,
-      String image,
-      int large,
-      int smale,
-      bool autoStart,
-      int idleTime});
-}
-
-/// @nodoc
-class __$$TrainingObjectImplCopyWithImpl<$Res>
-    extends _$TrainingObjectCopyWithImpl<$Res, _$TrainingObjectImpl>
-    implements _$$TrainingObjectImplCopyWith<$Res> {
-  __$$TrainingObjectImplCopyWithImpl(
-      _$TrainingObjectImpl _value, $Res Function(_$TrainingObjectImpl) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? exercises = null,
-    Object? image = null,
-    Object? large = null,
-    Object? smale = null,
-    Object? autoStart = null,
-    Object? idleTime = null,
-  }) {
-    return _then(_$TrainingObjectImpl(
-      null == exercises
-          ? _value.exercises
-          : exercises // ignore: cast_nullable_to_non_nullable
-              as String,
-      null == image
-          ? _value.image
-          : image // ignore: cast_nullable_to_non_nullable
-              as String,
-      null == large
-          ? _value.large
-          : large // ignore: cast_nullable_to_non_nullable
-              as int,
-      null == smale
-          ? _value.smale
-          : smale // ignore: cast_nullable_to_non_nullable
-              as int,
-      null == autoStart
-          ? _value.autoStart
-          : autoStart // ignore: cast_nullable_to_non_nullable
-              as bool,
-      null == idleTime
-          ? _value.idleTime
-          : idleTime // ignore: cast_nullable_to_non_nullable
-              as int,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$TrainingObjectImpl implements _TrainingObject {
-  _$TrainingObjectImpl(this.exercises, this.image, this.large, this.smale,
-      this.autoStart, this.idleTime);
-
-  @override
-  final String exercises;
-  @override
-  final String image;
-  @override
-  final int large;
-  @override
-  final int smale;
-  @override
-  final bool autoStart;
-  @override
-  final int idleTime;
-
-  @override
-  String toString() {
-    return 'TrainingObject(exercises: $exercises, image: $image, large: $large, smale: $smale, autoStart: $autoStart, idleTime: $idleTime)';
-  }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$TrainingObjectImpl &&
-            (identical(other.exercises, exercises) ||
-                other.exercises == exercises) &&
-            (identical(other.image, image) || other.image == image) &&
-            (identical(other.large, large) || other.large == large) &&
-            (identical(other.smale, smale) || other.smale == smale) &&
-            (identical(other.autoStart, autoStart) ||
-                other.autoStart == autoStart) &&
-            (identical(other.idleTime, idleTime) ||
-                other.idleTime == idleTime));
-  }
-
-  @override
-  int get hashCode => Object.hash(
-      runtimeType, exercises, image, large, smale, autoStart, idleTime);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$TrainingObjectImplCopyWith<_$TrainingObjectImpl> get copyWith =>
-      __$$TrainingObjectImplCopyWithImpl<_$TrainingObjectImpl>(
-          this, _$identity);
-}
-
-abstract class _TrainingObject implements TrainingObject {
-  factory _TrainingObject(
-      final String exercises,
-      final String image,
-      final int large,
-      final int smale,
-      final bool autoStart,
-      final int idleTime) = _$TrainingObjectImpl;
-
-  @override
-  String get exercises;
-  @override
-  String get image;
-  @override
-  int get large;
-  @override
-  int get smale;
-  @override
-  bool get autoStart;
-  @override
-  int get idleTime;
-  @override
-  @JsonKey(ignore: true)
-  _$$TrainingObjectImplCopyWith<_$TrainingObjectImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -1,6 +1,6 @@
-import 'dart:io';
 
 import 'package:dartz/dartz.dart';
+import 'package:reports/data/data_source/lacal_database.dart';
 import 'package:reports/data/network/failure.dart';
 import 'package:reports/domain/models/models.dart';
 import 'package:reports/domain/repository/repository.dart';
@@ -26,7 +26,7 @@ class AddColumnUsecase extends BaseUseCase<AddColumnUsecaseInput, String> {
 class AddColumnUsecaseInput {
   String columnName;
 
-  List<String> images;
+  List<ImageDataHive> images;
 
   String longitude;
   String latitude;

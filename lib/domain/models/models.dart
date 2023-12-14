@@ -1,18 +1,35 @@
-import 'dart:io';
+
+import 'package:reports/data/data_source/lacal_database.dart';
 
 // Add Column  model
 class AddColumn {
-  String columnName ;
-  List<String> images ;
+  String columnName;
+
+  List<ImageDataHive> images;
+
   String latitude;
   String longitude;
-  AddColumn({
-    required this.columnName,
-    required this.images,
-    required this.latitude,
-    required this.longitude
-  });
+
+  AddColumn(
+      {required this.columnName,
+      required this.images,
+      required this.latitude,
+      required this.longitude});
 }
+//
+// class ImageDataModel {
+//   String path;
+//   String date;
+//   String late;
+//   String long;
+//
+//   ImageDataModel({
+//     required this.path,
+//     required this.date,
+//     required this.late,
+//     required this.long,
+//   });
+// }
 
 class Authentication {
   UserData? userData;
@@ -23,16 +40,14 @@ class Authentication {
     required this.token,
   });
 }
+
 class UserData {
   String username;
+
   UserData({
     required this.username,
   });
 }
-
-
-
-
 
 class LoginAuthentication {
   int id;
@@ -43,4 +58,3 @@ class LoginAuthentication {
     required this.token,
   });
 }
-

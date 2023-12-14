@@ -2,10 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hive/hive.dart';
-import 'package:reports/app/constant.dart';
-import 'package:reports/app/di.dart';
-import 'package:reports/domain/models/models.dart';
 import 'package:reports/presentation/common/reusable/custom_button.dart';
 import 'package:reports/presentation/common/reusable/custom_text_form_field.dart';
 import 'package:reports/presentation/common/state_render/state_renderer_imp.dart';
@@ -19,7 +15,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:reports/data/data_source/lacal_database.dart';
 
 class EditColumnView extends StatefulWidget {
-  EditColumnView({Key? key, required this.index, required this.addColumnModel})
+  const EditColumnView(
+      {Key? key, required this.index, required this.addColumnModel})
       : super(key: key);
   final AddColumnModel addColumnModel;
 
@@ -33,11 +30,31 @@ class _EditColumnViewState extends State<EditColumnView> {
   final EditColumnViewModel _viewModel = EditColumnViewModel();
   final TextEditingController _columnNameController = TextEditingController();
   final ImagePicker _imagePicker = ImagePicker();
-  List<String> images = [
-    "",
-    "",
-    "",
-    "",
+  List<ImageDataHive> images = [
+    ImageDataHive(
+      path: "",
+      date: "",
+      long: "",
+      late: "",
+    ),
+    ImageDataHive(
+      path: "",
+      date: "",
+      long: "",
+      late: "",
+    ),
+    ImageDataHive(
+      path: "",
+      date: "",
+      long: "",
+      late: "",
+    ),
+    ImageDataHive(
+      path: "",
+      date: "",
+      long: "",
+      late: "",
+    ),
   ];
 
   void _bind() {
@@ -68,6 +85,15 @@ class _EditColumnViewState extends State<EditColumnView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(
+            Icons.arrow_back,
+            color: ColorManager.white,
+          ),
+        ),
         title: const Text("تعديل"),
       ),
       body: Directionality(
@@ -104,16 +130,16 @@ class _EditColumnViewState extends State<EditColumnView> {
           children: [
             StreamBuilder<String>(
               stream: _viewModel.beforeImageOutput,
-              builder: (context, snapshot) =>
-                  _customItem(AppStrings.before, snapshot.data ?? images[0], 0),
+              builder: (context, snapshot) => _customItem(
+                  AppStrings.before, snapshot.data ?? images[0].path, 0),
             ),
             SizedBox(
               width: AppSize.s20.w,
             ),
             StreamBuilder<String>(
               stream: _viewModel.innerImage1Output,
-              builder: (context, snapshot) =>
-                  _customItem(AppStrings.inner, snapshot.data ?? images[1], 1),
+              builder: (context, snapshot) => _customItem(
+                  AppStrings.inner, snapshot.data ?? images[1].path, 1),
             ),
           ],
         ),
@@ -126,8 +152,8 @@ class _EditColumnViewState extends State<EditColumnView> {
           children: [
             StreamBuilder<String>(
               stream: _viewModel.innerImage2Output,
-              builder: (context, snapshot) =>
-                  _customItem(AppStrings.inner, snapshot.data ?? images[2], 2),
+              builder: (context, snapshot) => _customItem(
+                  AppStrings.inner, snapshot.data ?? images[2].path, 2),
             ),
             SizedBox(
               width: AppSize.s20.w,
@@ -136,7 +162,7 @@ class _EditColumnViewState extends State<EditColumnView> {
               stream: _viewModel.afterImageOutput,
               builder: (context, snapshot) => _customItem(
                 AppStrings.after,
-                snapshot.data ?? images[3],
+                snapshot.data ?? images[3].path,
                 3,
               ),
             ),
@@ -329,6 +355,7 @@ class _EditColumnViewState extends State<EditColumnView> {
 
   _imageFromGallery(int num, ImageSource imageSource) async {
     var image = await _imagePicker.pickImage(source: imageSource);
+
     switch (num) {
       case 0:
         print(num);

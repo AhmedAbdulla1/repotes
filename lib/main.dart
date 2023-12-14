@@ -12,6 +12,7 @@ void main() async {
   final document = await getApplicationDocumentsDirectory();
   await Hive.initFlutter(document.path);
   Hive.registerAdapter(AddColumnModelAdapter());
+  Hive.registerAdapter(ImageDataHiveAdapter());
   await Hive.openBox<AddColumnModel>(Constant.mainBoxName);
   await Hive.openBox<String>(Constant.pdfName);
   runApp(MyApp());

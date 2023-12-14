@@ -1,8 +1,5 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'dart:typed_data';
 
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -10,9 +7,12 @@ import 'package:reports/app/app_prefs.dart';
 import 'package:reports/app/constant.dart';
 import 'package:reports/app/di.dart';
 import 'package:reports/data/data_source/lacal_database.dart';
+import 'package:reports/presentation/common/state_render/state_renderer_imp.dart';
 import 'package:reports/presentation/resources/color_manager.dart';
+import 'package:reports/presentation/resources/routes_manager.dart';
 import 'package:reports/presentation/resources/string_manager.dart';
 import 'package:reports/presentation/resources/values_manager.dart';
+import 'package:reports/presentation/show_pdf/view_model.dart';
 
 class ShowPDFView extends StatefulWidget {
   const ShowPDFView(
@@ -30,32 +30,8 @@ class ShowPDFView extends StatefulWidget {
 }
 
 class _ShowPDFViewState extends State<ShowPDFView> {
-  String url = 'https://roayadesign.com/api_s/tqarer_a3meda_s3udia/pdf_upload';
-  final AppPreferences _appPreferences = instance<AppPreferences>();
+  final ShowPdfViewModel _viewModel = ShowPdfViewModel();
   bool isLoading = false;
-  Box box = Hive.box<AddColumnModel>(Constant.mainBoxName);
-
-  Future<void> uploadFile(String filePath, String url) async {
-    final dio = Dio();
-
-    try {
-      FormData formData = FormData.fromMap({
-        'user_name': _appPreferences.getToken(),
-        'pdf': await MultipartFile.fromFile(filePath),
-      });
-
-      Response response = await dio.post(url, data: formData);
-      if (response.statusCode == 200) {
-        isLoading = false;
-        setState(() {});
-        print('File uploaded successfully!');
-      } else {
-        print('File upload failed with status ${response.statusCode}');
-      }
-    } catch (error) {
-      print('File upload failed: $error');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,60 +40,62 @@ class _ShowPDFViewState extends State<ShowPDFView> {
         title: const Text(
           'pdf',
         ),
-      ),
-      body: SafeArea(
-        child: Center(
-          child: Stack(children: [
-            Column(
-              children: [
-                widget.filepath.isNotEmpty
-                    ? Expanded(
-                        child: PDFView(
-                          filePath: widget.filepath,
-                          pageSnap: false,
-                          onRender: (page) {
-                            setState(() {});
-                          },
-                        ),
-                      )
-                    : const SizedBox(),
-                if (widget.state)
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: SizedBox(
-                        height: AppSize.s55,
-                        width: double.infinity,
-                        child: ElevatedButton(
-                            onPressed: !isLoading
-                                ? () async {
-                                    isLoading = true;
-                                    setState(() {});
-                                    await uploadFile(widget.filepath, url)
-                                        .then((value) {
-                                          isLoading = false ;
-                                          setState(() {
-                                            box.deleteAt(widget.index);
-                                            Navigator.pop(context);
-                                          });
-
-                                    });
-                                  }
-                                : null,
-                            child: const Text(AppStrings.save))),
-                  ),
-              ],
-            ),
-            if (isLoading)
-              Center(
-                child: Container(
-                  color: Colors.black12,
-                  child: CircularProgressIndicator(
-                    color: ColorManager.primary,
-                  ),
-                ),
-              )
-          ]),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: ColorManager.white,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
+      ),
+      body: StreamBuilder<StateFlow>(
+          stream: _viewModel.outputState,
+          builder: (context, snapshot) =>
+              snapshot.data?.getScreenWidget(
+                context,
+                _getContent(),
+                () {},
+              ) ??
+              _getContent()),
+    );
+  }
+
+  Widget _getContent() {
+    return SafeArea(
+      child: Column(
+        children: [
+          widget.filepath.isNotEmpty
+              ? Expanded(
+                  child: PDFView(
+                    filePath: widget.filepath,
+                  ),
+                )
+              : const SizedBox(),
+          if (widget.state)
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SizedBox(
+                  height: AppSize.s55,
+                  width: double.infinity,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        _viewModel
+                            .uploadPdf(
+                          widget.filepath,
+                          context,
+                          widget.index,
+                        ).then((value) {
+                         if (value) Navigator.pop(context);
+                        });
+                      },
+                      child: const Text(
+                        AppStrings.save,
+                        style: TextStyle(color: Colors.white),
+                      ))),
+            ),
+        ],
       ),
     );
   }

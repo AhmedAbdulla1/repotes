@@ -1,12 +1,10 @@
-import 'package:hive/hive.dart';
-import 'package:reports/app/constant.dart';
 
 class AppStrings {
 
 
   static const String splashTitle = "تقارير";
   static const String noRouteFound = "No Route Found";
-  static const String columnName = 'اسم العمود';
+  static const String columnName = 'رقم العمود';
   static const String loginTitle = 'LOGIN';
   static const String end = 'إنهاء';
   static const String login = 'LOGIN';
@@ -21,13 +19,13 @@ class AppStrings {
   static const String delete = 'حذف';
   static const String show = "عرض";
   static const String edit = 'تعديل';
-
+  static const String search = 'بحث';
   static const String confirmError = 'Password not confirm';
   static const String userName = 'User Name';
   static const String emailError = 'برجاء ادخال اسم المستخدم ';
   static const String password = 'Password';
   static const String passwordError = 'برجاء ادخال كلمة المرور';
-  static const String search = "Search or Add New Exercise";
+  // static const String search = "Search or Add New Exercise";
 
   static const String popularDoctor = "Popular Doctor";
   static const String featureDoctor = "Feature Doctor";
@@ -40,7 +38,6 @@ class AppStrings {
   static const String enter4Digits = 'Enter 4 Digits Code';
   static const String enter4digitsSubTitle =
       'Enter the 4 digits code that you received on your email.';
-  static const String Continue = 'Continue';
   static const String doctor = 'Are you a doctor ?';
   static const String addProfilePicture = 'Profile Picture';
 

@@ -80,12 +80,14 @@ Future<void> initAppModule() async {
 }
 
 initLoginModule() {
-  if (!GetIt.I.isRegistered<LoginUseCase>()) {
-    instance.registerFactory<LoginUseCase>(
-      () => LoginUseCase(
-        instance<Repository>(),
-      ),
-    );
+  if (!GetIt.I.isRegistered<LoginViewModel>()) {
+    if(!GetIt.I.isRegistered<LoginUseCase>()){
+      instance.registerFactory<LoginUseCase>(
+        () => LoginUseCase(
+          instance<Repository>(),
+        ),
+      );
+    }
     instance.registerFactory<LoginViewModel>(
       () => LoginViewModel(
         instance<LoginUseCase>(),
@@ -135,7 +137,15 @@ initLoginModule() {
 // }
 initMainModule() {
   if (!GetIt.I.isRegistered<MainViewModel>()) {
-    instance.registerFactory<MainViewModel>(() => MainViewModel());
+    if(!GetIt.I.isRegistered<LoginUseCase>()){
+    instance.registerFactory<LoginUseCase>(
+          () => LoginUseCase(
+        instance<Repository>(),
+      ),
+    );}
+    instance.registerFactory<MainViewModel>(() => MainViewModel(
+      instance<LoginUseCase>(),
+    ));
   }
   if (!GetIt.I.isRegistered<AddColumnViewModel>()) {
     instance.registerFactory<AddColumnViewModel>(

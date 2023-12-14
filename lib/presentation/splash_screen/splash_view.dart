@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:reports/domain/usecase/login_usecase.dart';
 import 'package:reports/presentation/resources/font_manager.dart';
 
 import '../../app/app_prefs.dart';
@@ -26,8 +27,8 @@ class _SplashViewState extends State<SplashView> {
       const Duration(
         seconds: AppConstant.timer,
       ),
-      () async {
-        if (await _appPreferences.isPressKeyLoginScreen()) {
+      () {
+        if (_appPreferences.isPressKeyLoginScreen()) {
           Navigator.pushReplacementNamed(context, Routes.mainScreen);
         } else {
           Navigator.pushReplacementNamed(context, Routes.loginScreen);

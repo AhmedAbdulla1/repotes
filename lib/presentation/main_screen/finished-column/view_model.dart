@@ -1,12 +1,8 @@
 import 'dart:async';
-import 'dart:ffi';
-import 'dart:io';
-import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:reports/app/constant.dart';
 import 'package:reports/data/data_source/lacal_database.dart';
 import 'package:reports/presentation/base/base_view_model.dart';
-import 'package:reports/presentation/common/state_render/state_render.dart';
 import 'package:reports/presentation/common/state_render/state_renderer_imp.dart';
 
 
@@ -15,8 +11,12 @@ class FinishedColumnViewModel extends AddColumnViewModelInput {
       StreamController<List<AddColumnModel>>.broadcast();
   final StreamController<void>_imageIsFullController =
   StreamController<void>.broadcast();
+  final StreamController<String>_searchStreamController =
+  StreamController<String>.broadcast();
   Box box = Hive.box<AddColumnModel>(Constant.mainBoxName);
-
+  List<AddColumnModel> list = [];
+  List<AddColumnModel> filteredList = [];
+  int numOfImage =0;
   @override
   void start() {
     getData();
@@ -30,10 +30,10 @@ class FinishedColumnViewModel extends AddColumnViewModelInput {
   }
 
   getData() {
-
-    List<AddColumnModel> list = box.values.toList() as List<AddColumnModel>;
+    list= box.values.toList() as List<AddColumnModel>;
+    filteredList= list;
+    dataInput.add(filteredList);
     inputState.add(ContentState());
-
   }
 
   @override
@@ -41,14 +41,12 @@ class FinishedColumnViewModel extends AddColumnViewModelInput {
 
   @override
   void dispose() {
-
+    _searchStreamController.close();
     _imageIsFullController.close();
     dataController.close();
     super.dispose();
   }
-  int numOfImage =0;
   setImages(int i ){
-    // print(i);
     numOfImage=i;
     i== 4 ?imageIsFullInput.add(true):imageIsFullInput.add(false);
   }
@@ -61,21 +59,41 @@ class FinishedColumnViewModel extends AddColumnViewModelInput {
   @override
   Stream<bool> get imageIsFullOutput => _imageIsFullController.stream.map((event) => _isInputValid());
   bool _isInputValid(){
-    print("isValid");
-    print(numOfImage);
     return numOfImage==4;
   }
+  @override
+  setSearch(String text) {
+    if (text.isNotEmpty) {
+      filteredList = list
+          .where((column) => column.columnName.toLowerCase().contains(text.toLowerCase()))
+          .toList();
+
+    } else {
+      filteredList = list;
+    }
+    print(filteredList);
+    dataInput.add(filteredList);
+  }
+
+  @override
+  Sink get searchInput => _searchStreamController.sink;
+
+  @override
+  Stream<String> get searchOutput => _searchStreamController.stream;
 
 }
 
 abstract class AddColumnViewModelInput extends AddColumnViewModelOutput {
-  endProcess();
+  endProcess ();
+  setSearch(String text );
 
   Sink get imageIsFullInput;
   Sink<List<AddColumnModel>> get dataInput;
+  Sink get searchInput;
 }
 
 abstract class AddColumnViewModelOutput extends BaseViewModel {
   Stream<List<AddColumnModel>> get dataOutput;
+  Stream<String> get searchOutput;
   Stream<bool> get imageIsFullOutput;
 }

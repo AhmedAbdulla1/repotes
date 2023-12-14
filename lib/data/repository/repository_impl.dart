@@ -1,26 +1,23 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:reports/app/app_prefs.dart';
 import 'package:reports/app/constant.dart';
+import 'package:reports/app/di.dart';
 import 'package:reports/data/data_source/lacal_database.dart';
-import 'package:reports/data/data_source/local_data_source.dart';
 import 'package:dartz/dartz.dart';
 import 'package:reports/data/data_source/remote_data_source.dart';
-import 'package:reports/data/mapper/mapper.dart';
 import 'package:reports/data/network/error_handler.dart';
 import 'package:reports/data/network/failure.dart';
 import 'package:reports/data/network/network_info.dart';
 import 'package:reports/data/network/requests.dart';
-import 'package:reports/data/response/responses.dart';
 import 'package:reports/domain/models/models.dart';
 import 'package:reports/domain/repository/repository.dart';
-import 'package:reports/presentation/resources/string_manager.dart';
 
 class RepositoryImpl implements Repository {
   // final LocalDataSource _localDataSource;
-  Dio dio = Dio();
+  final AppPreferences _appPreferences = instance<AppPreferences>();
+  Box columnBox = Hive.box<AddColumnModel>(Constant.mainBoxName);
+  final Dio dio = Dio();
   String url = "${Constant.baseurl}login.php";
   final RemoteDataSource _remoteDataSource;
   final NetWorkInfo _networkInfo;
@@ -33,7 +30,6 @@ class RepositoryImpl implements Repository {
 
   @override
   Future<Either<Failure, String>> login(LoginRequest loginRequest) async {
-    print(url);
     FormData formData = FormData.fromMap({
       'username': loginRequest.email,
       'password': loginRequest.password,
@@ -41,7 +37,7 @@ class RepositoryImpl implements Repository {
     if (await _networkInfo.isConnected) {
       try {
         Response response = await dio.post(
-          url,
+          "${Constant.baseurl}login.php",
           data: formData,
         );
 
@@ -54,135 +50,6 @@ class RepositoryImpl implements Repository {
             Failure(
               code: 0,
               message: response.data['massage'],
-            ),
-          );
-        }
-      } catch (error) {
-        print("12345600000000000000000 $error 000000000000000");
-        return Left(
-          ErrorHandler.handle(error).failure,
-        );
-      }
-    } else {
-      return Left(
-        DataSource.noInternetConnection.getFailure(),
-      );
-    }
-  }
-
-  @override
-  // Future<Either<Failure, void>> sendEmail(String email) async {
-  //   if (await _networkInfo.isConnected) {
-  //     try {
-  //       final void response = await _remoteDataSource.sendEmailResponse(email);
-  //       return Right(
-  //         response,
-  //       );
-  //     } catch (error) {
-  //       return Left(
-  //         ErrorHandler.handle(error).failure,
-  //       );
-  //     }
-  //   } else {
-  //     return Left(
-  //       DataSource.noInternetConnection.getFailure(),
-  //     );
-  //   }
-  // }
-
-  // @override
-  // Future<Either<Failure, String>> restPassword(
-  //     RestPasswordRequest restPasswordRequest) async {
-  //   if (await _networkInfo.isConnected) {
-  //     try {
-  //       final RestPasswordResponse response =
-  //           await _remoteDataSource.restPasswordResponse(restPasswordRequest);
-  //
-  //       if (response.status == ApiInternalStatus.success) {
-  //         // _localDataSource.saveHomeToCache(response);
-  //         return Right(
-  //           response.toDomain(),
-  //         );
-  //       } else {
-  //         return Left(
-  //           Failure(
-  //             code: ApiInternalStatus.failure,
-  //             message: response.message ?? ResponseMessage.customDefault,
-  //           ),
-  //         );
-  //       }
-  //     } catch (error) {
-  //       return Left(
-  //         ErrorHandler.handle(error).failure,
-  //       );
-  //     }
-  //   } else {
-  //     return Left(
-  //       DataSource.noInternetConnection.getFailure(),
-  //     );
-  //   }
-  // }
-
-  // @override
-  // Future<Either<Failure, Home>> dashboard() async {
-  //   try {
-  //     final response = await _localDataSource.homeResponse(true);
-  //     return Right(
-  //       response.toDomain(),
-  //     );
-  //   } catch (cacheError) {
-  //     if (await _networkInfo.isConnected) {
-  //       final DocumentSnapshot response = await _remoteDataSource.dashboardResponse();
-  //       try {
-  //         if (response.exists) {
-  //           // _localDataSource.saveHomeToCache(response);
-  //           return Right(
-  //             response.toDomain(),
-  //           );
-  //         } else {
-  //           return Left(
-  //             Failure(
-  //               code: ApiInternalStatus.failure,
-  //               message: ResponseMessage.customDefault,
-  //             ),
-  //           );
-  //         }
-  //       } catch (error) {
-  //         return Left(
-  //           ErrorHandler.handle(error).failure,
-  //         );
-  //       }
-  //     } else {
-  //       try {
-  //         // final response = await _localDataSource.homeResponse(false);
-  //         // return Right(
-  //         //   response.toDomain(),
-  //         // );
-  //       } catch (catchError) {
-  //         return Left(
-  //           DataSource.noInternetConnection.getFailure(),
-  //         );
-  //       }
-  //     }
-  //   }
-  // }
-
-  @override
-  Future<Either<Failure, void>> updateProfile(
-      UpdateProfileRequest updateProfileRequest) async {
-    if (await _networkInfo.isConnected) {
-      void response;
-      try {
-        if (true) {
-          // _localDataSource.saveHomeToCache(response);
-          return Right(
-            response,
-          );
-        } else {
-          return Left(
-            Failure(
-              code: ApiInternalStatus.failure,
-              message: ResponseMessage.customDefault,
             ),
           );
         }
@@ -200,8 +67,6 @@ class RepositoryImpl implements Repository {
 
   @override
   Future<Either<Failure, String>> addColumn(AddColumn addColumn) async {
-    Box columnBox = Hive.box<AddColumnModel>(Constant.mainBoxName);
-    print("before ${addColumn.images}");
     try {
       columnBox.add(
         AddColumnModel(
@@ -214,16 +79,82 @@ class RepositoryImpl implements Repository {
       print(columnBox.values.toList());
       return const Right('done');
     } catch (error) {
-      print(error);
       return Left(Failure(code: 0, message: "فشل الحفظ"));
     }
   }
 
+  @override
+  Future<Either<Failure, String>> uploadPdf(String filePath) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        FormData formData = FormData.fromMap({
+          'user_name': _appPreferences.getToken(),
+          'pdf': await MultipartFile.fromFile(filePath),
+        });
+        Response response = await dio.post(
+          'https://roayadesign.com/api_s/tqarer_a3meda_s3udia/pdf_upload',
+          data: formData,
+        );
 
+        if (response.data["status"] == "1") {
+          print(response.data);
+          return const Right("");
+        } else {
+          return Left(
+            Failure(
+              code: 0,
+              message: response.data['massage'],
+            ),
+          );
+        }
+      } catch (error) {
+        return Left(
+          ErrorHandler.handle(error).failure,
+        );
+      }
+    } else {
+      return Left(
+        DataSource.noInternetConnection.getFailure(),
+      );
+    }
+  }
+  @override
+  Future<Either<Failure, String>> updateStatus(String fileName, String status) async {
 
+    if (await _networkInfo.isConnected) {
+      try {
+        FormData formData = FormData.fromMap({
+          'filename': fileName,
+          'staues': status,
+        });
+        Response response = await dio.post(
+          'https://roayadesign.com/api_s/tqarer_a3meda_s3udia/button_api',
+          data: formData,
+        );
+
+        if (response.data["status"] == "1") {
+          return const Right("");
+        } else {
+          return Left(
+            Failure(
+              code: 0,
+              message: response.data['massage'],
+            ),
+          );
+        }
+      } catch (error) {
+        return Left(
+          ErrorHandler.handle(error).failure,
+        );
+      }
+    } else {
+      return Left(
+        DataSource.noInternetConnection.getFailure(),
+      );
+    }
+
+  }
 }
-
-
 
 // @override
 // Future<Either<Failure, String>> forgotPassword(String email) async {

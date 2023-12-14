@@ -60,23 +60,22 @@ class EmptyState extends StateFlow {
 }
 
 // success state
-class SuccessState extends StateFlow{
+class SuccessState extends StateFlow {
   final String message;
 
   SuccessState(this.message);
 
   @override
-  String getMessage() =>message;
+  String getMessage() => message;
 
   @override
-  StateRenderType getStateRenderType() =>StateRenderType.popupSuccessState;
-
+  StateRenderType getStateRenderType() => StateRenderType.popupSuccessState;
 }
 // content state
 
 class ContentState extends StateFlow {
   @override
-  String getMessage() =>Constant.empty;
+  String getMessage() => Constant.empty;
 
   @override
   StateRenderType getStateRenderType() => StateRenderType.contentState;
@@ -91,7 +90,7 @@ extension StateFlowExtension on StateFlow {
           dismissDialog(context);
           if (getStateRenderType() == StateRenderType.popupLoadingState) {
             // popup show
-            showPopup(context, getStateRenderType(), getMessage(),retryAction);
+            showPopup(context, getStateRenderType(), getMessage(), retryAction);
             //return content screen
             return contentScreenWidget;
           } else {
@@ -106,7 +105,7 @@ extension StateFlowExtension on StateFlow {
         {
           dismissDialog(context);
           if (getStateRenderType() == StateRenderType.popupErrorState) {
-            showPopup(context, getStateRenderType(), getMessage(),retryAction);
+            showPopup(context, getStateRenderType(), getMessage(), retryAction);
             return contentScreenWidget;
           } else {
             return StateRenderer(
@@ -124,34 +123,37 @@ extension StateFlowExtension on StateFlow {
         {
           return contentScreenWidget;
         }
-      case SuccessState:{
-        dismissDialog(context);
-        showPopup(context, StateRenderType.popupSuccessState, getMessage(),retryAction);
-        return contentScreenWidget;
-      }
+      case SuccessState:
+        {
+          dismissDialog(context);
+          showPopup(context, StateRenderType.popupSuccessState, getMessage(),
+              retryAction);
+          return contentScreenWidget;
+        }
       default:
         dismissDialog(context);
         return contentScreenWidget;
     }
   }
 
-  showPopup(
-      BuildContext context, StateRenderType stateRenderType, String message ,Function retryAction ) {
+  showPopup(BuildContext context, StateRenderType stateRenderType,
+      String message, Function retryAction) {
     WidgetsBinding.instance.addPostFrameCallback((_) => showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) => StateRenderer(
             stateRenderType: stateRenderType,
             message: message,
             retryAction: retryAction)));
   }
 
-  // for check if there dialog message or not
+  // for check if there dialog message of not
+  _isCurrentDialogShowing(BuildContext context) =>
+      ModalRoute.of(context)?.isCurrent != true;
 
   dismissDialog(BuildContext context) {
     if (_isCurrentDialogShowing(context)) {
       Navigator.of(context, rootNavigator: true).pop(true);
     }
   }
-  _isCurrentDialogShowing(BuildContext context) =>
-      ModalRoute.of(context)?.isCurrent != true;
 }

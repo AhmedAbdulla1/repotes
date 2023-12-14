@@ -1,18 +1,15 @@
-import 'dart:ffi';
-import 'dart:io';
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:reports/app/constant.dart';
+
 import 'package:reports/app/di.dart';
 import 'package:reports/data/data_source/lacal_database.dart';
-import 'package:reports/domain/models/models.dart';
 import 'package:reports/domain/repository/repository.dart';
 import 'package:reports/domain/usecase/add_coulumn_usecase.dart';
 import 'package:reports/presentation/base/base_view_model.dart';
 import 'package:reports/presentation/common/freezed/freezed.dart';
 import 'package:reports/presentation/common/state_render/state_render.dart';
 import 'package:reports/presentation/common/state_render/state_renderer_imp.dart';
+import 'package:intl/intl.dart';
 
 class AddColumnViewModel extends AddColumnViewModelInput {
   final StreamController<String> _columnStreamController =
@@ -28,11 +25,11 @@ class AddColumnViewModel extends AddColumnViewModelInput {
   final StreamController<String?> _beforeImageStreamController =
       StreamController<String?>.broadcast();
   final AddColumnUsecase _usecase = AddColumnUsecase(instance<Repository>());
-  List<String> images = [
-    "",
-    "",
-    "",
-    "",
+  List<ImageDataHive> images = [
+    ImageDataHive(path: "", date: "", late: "", long: ""),
+    ImageDataHive(path: "", date: "", late: "", long: ""),
+    ImageDataHive(path: "", date: "", late: "", long: ""),
+    ImageDataHive(path: "", date: "", late: "", long: ""),
   ];
 
   @override
@@ -95,22 +92,32 @@ class AddColumnViewModel extends AddColumnViewModelInput {
         longitude: position.longitude.toString(),
         latitude: position.latitude.toString(),
       );
+
       _allRightStreamController.add(null);
+      // inputState.add(ContentState());
       print("Latitude: ${position.latitude}, Longitude: ${position.longitude}");
     } catch (e) {
       print(e);
     }
   }
 
-  setImage(int index, String image) {
-    print(index);
-
-    images[index] = image ?? "";
-    print("ahemd${images}");
-    print(addColumnObject.image);
-    addColumnObject = addColumnObject.copyWith(image: images);
-    _allRightStreamController.add(null);
-    print(addColumnObject.image);
+  Future<void> setImage(int index, String image) async {
+    try {
+      await checkLocationPermission();
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      DateTime now = DateTime.now();
+      String date = DateFormat('yyyy/MM/d HH:mm').format(now);
+      images[index] = ImageDataHive(
+        path: image,
+        date: date,
+        long: position.longitude.toString(),
+        late: position.latitude.toString(),
+      );
+      addColumnObject = addColumnObject.copyWith(image: images);
+      _allRightStreamController.add(null);
+    } catch (e) {}
   }
 
   @override
@@ -126,7 +133,6 @@ class AddColumnViewModel extends AddColumnViewModelInput {
 
   @override
   addToDatBase() async {
-    print("bdada${addColumnObject.columnName}");
     (await _usecase.execute(
       AddColumnUsecaseInput(
         columnName: addColumnObject.columnName,
@@ -147,10 +153,10 @@ class AddColumnViewModel extends AddColumnViewModelInput {
       print(inputState.toString());
     });
     images = [
-      "",
-      "",
-      "",
-      "",
+      ImageDataHive(path: "", date: "", late: "", long: ""),
+      ImageDataHive(path: "", date: "", late: "", long: ""),
+      ImageDataHive(path: "", date: "", late: "", long: ""),
+      ImageDataHive(path: "", date: "", late: "", long: ""),
     ];
     _afterImageStreamController.sink.add(null);
     _innerImage1StreamController.sink.add(null);
@@ -165,13 +171,13 @@ class AddColumnViewModel extends AddColumnViewModelInput {
     print("=== column name ${addColumnObject.columnName.isNotEmpty}====");
     print("=== long ${addColumnObject.longitude.isNotEmpty}=====");
     print(
-        "=== image  ${addColumnObject.image[0].isNotEmpty || addColumnObject.image[1].isNotEmpty || addColumnObject.image[2].isNotEmpty || addColumnObject.image[3].isNotEmpty} ======");
+        "=== image  ${addColumnObject.image[0].path.isNotEmpty || addColumnObject.image[1].path.isNotEmpty || addColumnObject.image[2].path.isNotEmpty || addColumnObject.image[3].path.isNotEmpty} ======");
     return addColumnObject.columnName.isNotEmpty &&
-            addColumnObject.longitude.isNotEmpty &&
-            addColumnObject.image[0].isNotEmpty ||
-        addColumnObject.image[1].isNotEmpty ||
-        addColumnObject.image[2].isNotEmpty ||
-        addColumnObject.image[3].isNotEmpty;
+        addColumnObject.longitude.isNotEmpty &&
+        (addColumnObject.image[0].path.isNotEmpty ||
+            addColumnObject.image[1].path.isNotEmpty ||
+            addColumnObject.image[2].path.isNotEmpty ||
+            addColumnObject.image[3].path.isNotEmpty);
   }
 }
 
